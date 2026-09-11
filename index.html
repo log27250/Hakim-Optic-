@@ -116,6 +116,13 @@ table th, table td { padding: 8px 6px; font-size: 13px; }
 .license-gate{position:fixed;inset:0;z-index:100000;background:#f5f7fb;display:none;align-items:center;justify-content:center;padding:20px}.license-gate.show{display:flex}.license-card{width:min(520px,100%);background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 35px #00000018;text-align:center}.license-card h2{margin:0 0 10px}.license-card p{color:#64748b;line-height:1.8}.license-card .btn{margin-top:10px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0f172a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
 </head>
 <body>
 <div id="appShell">
@@ -307,7 +314,7 @@ table th, table td { padding: 8px 6px; font-size: 13px; }
 <div class="panel"><h3>⚙️ إعدادات النظام</h3><p>تعديل بيانات المركز وإعدادات الحساب.</p><button class="btn" onclick="show('settings')">فتح الإعدادات</button></div>
 <div class="panel"><h3>💾 البيانات</h3><p>النسخ الاحتياطي والاستعادة متاحة للـAdmin فقط.</p><button class="btn secondary" onclick="exportBackup()">تصدير نسخة</button><button class="btn secondary" style="margin-right:8px" onclick="document.getElementById('backupFile').click()">استعادة نسخة</button></div>
 </div></section>
-<section class="hidden" id="settings"><div class="top"><div class="title"><h1>الإعدادات</h1><p>بيانات المركز والحساب السحابي</p></div></div><div class="panel"><div class="form"><div><label>اسم المركز</label><input id="setCenterName" value="مركز الحكيم للبصريات"/></div><div><label>الهاتف</label><input id="setPhone"/></div><div><label>العنوان</label><input id="setAddress"/></div><div><label>اسم المسؤول</label><input id="setManager"/></div><div><label>العملة</label><input id="setCurrency" value="جنيه سوداني"/></div><div><label>بادئة الفواتير</label><input id="setInvoicePrefix" value="HK-INV-"/></div><div><label>البريد الإلكتروني</label><input autocomplete="email" id="setEmail" placeholder="example@email.com" type="email"/></div><div><label>شعار المركز</label><input id="setLogoFile" type="file" accept="image/png,image/jpeg,image/webp" onchange="handleCenterLogo(this)"/></div><div class="full"><div id="logoPreviewWrap" style="display:none;margin:8px 0;text-align:center"><img id="logoPreview" style="max-height:80px;max-width:220px;object-fit:contain"/></div><button class="btn" onclick="saveSettings()">حفظ إعدادات المركز</button></div></div></div><div class="panel" style="margin-top:15px"><h3>🔐 أمان الدخول</h3><p>الدخول إلى النظام يتم باستخدام حساب Google فقط.</p><div class="form"><div><label>اسم المستخدم الحالي</label><input id="setUser" value="Alhakim"/></div><div><label>كلمة المرور الحالية</label><input id="setCurrentPassword" type="password"/></div><div><label>اسم المستخدم الجديد</label><input id="setNewUser"/></div><div><label>كلمة المرور الجديدة</label><input id="setNewPassword" type="password"/></div></div><button class="btn danger" onclick="changeLoginCredentials()">تغيير بيانات الدخول</button></div><div class="panel" style="margin-top:15px">
+<section class="hidden" id="settings"><div class="top"><div class="title"><h1>الإعدادات</h1><p>بيانات المركز والحساب السحابي</p></div></div><div class="panel"><div class="form"><div><label>اسم المركز</label><input id="setCenterName" value="مركز الحكيم للبصريات"/></div><div><label>الهاتف</label><input id="setPhone"/></div><div><label>العنوان</label><input id="setAddress"/></div><div><label>اسم المسؤول</label><input id="setManager"/></div><div><label>العملة</label><input id="setCurrency" value="جنيه سوداني"/></div><div><label>بادئة الفواتير</label><input id="setInvoicePrefix" value="HK-INV-"/></div><div><label>البريد الإلكتروني</label><input autocomplete="email" id="setEmail" placeholder="example@email.com" type="email"/></div><div class="full"><button class="btn" onclick="saveSettings()">حفظ إعدادات المركز</button></div></div></div><div class="panel" style="margin-top:15px"><h3>🔐 أمان الدخول</h3><p>الدخول إلى النظام يتم باستخدام حساب Google فقط.</p><div class="form"><div><label>اسم المستخدم الحالي</label><input id="setUser" value="Alhakim"/></div><div><label>كلمة المرور الحالية</label><input id="setCurrentPassword" type="password"/></div><div><label>اسم المستخدم الجديد</label><input id="setNewUser"/></div><div><label>كلمة المرور الجديدة</label><input id="setNewPassword" type="password"/></div></div><button class="btn danger" onclick="changeLoginCredentials()">تغيير بيانات الدخول</button></div><div class="panel" style="margin-top:15px">
 <h3>☁️ الحساب السحابي والمزامنة</h3>
 <p style="color:#64748b;font-size:12px">
 كل حساب Google له مركز وبيانات مستقلة. إذا دخلت بنفس حساب Google في جهاز آخر ستظهر نفس بياناتك تلقائيًا.
@@ -327,7 +334,7 @@ table th, table td { padding: 8px 6px; font-size: 13px; }
 </div>
 </div>
 </div>
-<div class="panel" style="margin-top:15px"><h3>📝 سجل النشاط</h3><p>يسجل الإجراءات الإدارية المهمة على هذا المركز.</p><button class="btn secondary" onclick="exportActivityLog()">تصدير سجل النشاط</button><div id="activityLogList" style="max-height:260px;overflow:auto;margin-top:10px"></div></div><div class="panel" style="margin-top:15px"><h3>💾 النسخ الاحتياطي</h3><button class="btn secondary" onclick="exportBackup()">تصدير نسخة احتياطية</button> <button class="btn secondary" onclick="document.getElementById('backupFile').click()">استعادة نسخة احتياطية</button><input accept="application/json" id="backupFile" onchange="importBackup(this)" style="display:none" type="file"/> <button class="btn" onclick="logout()">🔒 قفل النظام</button></div></section>
+<div class="panel" style="margin-top:15px"><h3>💾 النسخ الاحتياطي</h3><button class="btn secondary" onclick="exportBackup()">تصدير نسخة احتياطية</button> <button class="btn secondary" onclick="document.getElementById('backupFile').click()">استعادة نسخة احتياطية</button><input accept="application/json" id="backupFile" onchange="importBackup(this)" style="display:none" type="file"/> <button class="btn" onclick="logout()">🔒 قفل النظام</button></div></section>
 <footer style="text-align:center;padding:18px 10px;color:#64748b;font-size:13px">تم التصميم بواسطة د.لقمان بابكر</footer>
 </main>
 </div>
@@ -383,22 +390,8 @@ table th, table td { padding: 8px 6px; font-size: 13px; }
       <div class="full"><label>كلمة المرور</label><input id="localLoginPassword" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLocalLogin()"></div>
     </div>
     <button class="btn auth-primary" onclick="submitLocalLogin()">دخول</button>
-    <button class="auth-link" onclick="requestLocalPasswordRecovery()">نسيت كلمة المرور؟ استعادتها عبر البريد</button>
     <button class="auth-link" onclick="loginWithGoogle()">ربط/التحقق من حساب Google</button>
     <div id="localLoginError" class="auth-error"></div>
-  </div>
-</div>
-<div id="passwordRecoveryScreen" class="auth-screen">
-  <div class="auth-card">
-    <h2>استعادة كلمة مرور Admin</h2>
-    <p>تم التحقق من رابط الاستعادة عبر البريد. اختر كلمة مرور جديدة لحساب Admin المحلي.</p>
-    <div class="form">
-      <div class="full"><label>البريد المرتبط بالمركز</label><input id="recoveryEmail" type="email" readonly></div>
-      <div class="full"><label>كلمة المرور الجديدة</label><input id="recoveryNewPassword" type="password" autocomplete="new-password"></div>
-      <div class="full"><label>تأكيد كلمة المرور</label><input id="recoveryNewPassword2" type="password" autocomplete="new-password"></div>
-    </div>
-    <button class="btn auth-primary" onclick="completePasswordRecovery()">حفظ كلمة المرور الجديدة</button>
-    <div id="passwordRecoveryError" class="auth-error"></div>
   </div>
 </div>
 <script>
@@ -445,68 +438,6 @@ async function hashLocalPassword(v){
   return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 function hasLocalPassword(){return !!localStorage.getItem('hakim_local_password_hash')}
-function isPasswordRecoveryUrl(){
-  try{
-    const u=new URL(location.href);
-    const q=u.searchParams.get('type');
-    const h=location.hash||'';
-    return q==='recovery' || u.searchParams.get('password_recovery')==='1' || /(?:^|[&#])type=recovery(?:&|$)/.test(h) || /(?:^|[?#&])type=recovery(?:&|$)/.test(location.href);
-  }catch(e){return false}
-}
-function clearPasswordRecoveryUrl(){
-  try{history.replaceState({},document.title,location.pathname+location.search);}
-  catch(e){}
-}
-async function requestLocalPasswordRecovery(){
-  const err=document.getElementById('localLoginError');
-  try{
-    if(err)err.textContent='';
-    if(!isOnline()){if(err)err.textContent='استعادة كلمة المرور تحتاج اتصالاً بالإنترنت.';return}
-    const email=(localStorage.getItem(ADMIN_EMAIL_KEY)||localStorage.getItem('hakim_google_email')||'').trim();
-    if(!email){if(err)err.textContent='لا يوجد بريد Google مرتبط بهذا الجهاز. سجّل الدخول بحساب Google أولاً.';return}
-    if(!cloudClient && !await cloudInit()){if(err)err.textContent='تعذر الاتصال بخدمة الاستعادة.';return}
-    const redirectTo=location.origin+location.pathname+'?password_recovery=1';
-    const {error}=await cloudClient.auth.resetPasswordForEmail(email,{redirectTo});
-    if(error)throw error;
-    if(err)err.textContent='تم إرسال رابط الاستعادة إلى '+email+' . افتح الرسالة ثم أنشئ كلمة مرور جديدة.';
-  }catch(e){
-    console.error('requestLocalPasswordRecovery',e);
-    if(err)err.textContent='تعذر إرسال رابط الاستعادة: '+(e?.message||'حاول مرة أخرى.');
-  }
-}
-function showPasswordRecoveryScreen(email=''){
-  lockApp();showScreen('passwordRecoveryScreen');
-  const em=document.getElementById('recoveryEmail');if(em)em.value=email||localStorage.getItem(ADMIN_EMAIL_KEY)||localStorage.getItem('hakim_google_email')||'';
-  const e=document.getElementById('passwordRecoveryError');if(e)e.textContent='';
-  const p=document.getElementById('recoveryNewPassword');if(p){p.value='';setTimeout(()=>p.focus(),50)}
-  const p2=document.getElementById('recoveryNewPassword2');if(p2)p2.value='';
-}
-async function completePasswordRecovery(){
-  const e=document.getElementById('passwordRecoveryError');
-  try{
-    if(e)e.textContent='';
-    const p=document.getElementById('recoveryNewPassword')?.value||'';
-    const p2=document.getElementById('recoveryNewPassword2')?.value||'';
-    if(p.length<4){if(e)e.textContent='كلمة المرور يجب ألا تقل عن 4 أحرف أو أرقام.';return}
-    if(p!==p2){if(e)e.textContent='كلمتا المرور غير متطابقتين.';return}
-    if(!cloudClient && !await cloudInit()){if(e)e.textContent='تعذر التحقق من رابط الاستعادة.';return}
-    const sr=await cloudClient.auth.getSession();
-    const session=sr.data?.session;
-    if(!session){if(e)e.textContent='رابط الاستعادة غير صالح أو انتهت صلاحيته. اطلب رابطاً جديداً.';return}
-    const email=(session.user?.email||'').trim();
-    const saved=(localStorage.getItem(ADMIN_EMAIL_KEY)||'').trim();
-    if(saved && email && saved.toLowerCase()!==email.toLowerCase()){if(e)e.textContent='البريد لا يطابق المركز الموجود على هذا الجهاز.';return}
-    localStorage.setItem('hakim_local_password_hash',await hashLocalPassword(p));
-    localStorage.setItem('hakim_accounts_initialized','1');
-    clearPasswordRecoveryUrl();
-    try{await cloudClient.auth.signOut()}catch(_){}
-    alert('تم تغيير كلمة مرور Admin بنجاح. استخدم كلمة المرور الجديدة للدخول.');
-    showLocalLogin();
-  }catch(err){
-    console.error('completePasswordRecovery',err);
-    if(e)e.textContent='تعذر إكمال الاستعادة: '+(err?.message||'حاول مرة أخرى.');
-  }
-}
 function showScreen(id){document.querySelectorAll('.auth-screen').forEach(x=>x.style.display='none');const el=document.getElementById(id);if(el)el.style.display='flex'}
 function unlockApp(){document.getElementById('appShell')?.classList.add('unlocked');document.querySelectorAll('.auth-screen').forEach(x=>x.style.display='none');applyRoleUI()}
 function lockApp(){document.getElementById('appShell')?.classList.remove('unlocked');document.body.classList.remove('role-admin','role-user')}
@@ -942,6 +873,17 @@ function printInvoice(id){
         window.focus();
       })();
     <\/script>
+
+<script>
+(function(){
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('./sw.js', {scope:'./'})
+        .catch(function(err){ console.warn('Hakim Optic PWA:', err); });
+    });
+  }
+})();
+</script>
 </body></html>`);
   w.document.close();
 }function renderSales(){let s=getSales(),q=(salesSearch.value||'').toLowerCase();salesRows.innerHTML=s.slice().reverse().filter(x=>(x.id+' '+x.patientName).toLowerCase().includes(q)).map(x=>`<tr><td>${x.id}</td><td>${x.date}</td><td>${x.patientName||'—'}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.due)}</td><td>${x.status==='final'?'نهائية':'مبدئية'}</td><td>${x.paymentMethod==='bank'?'بنكك':'نقد'}</td><td><button class="btn" onclick="editInvoice('${x.id}')">تعديل</button> <button class="btn secondary" onclick="settleInvoice('${x.id}')">سداد</button> <button class="btn" onclick="printInvoice('${x.id}')">طباعة</button> <button class="btn secondary" onclick="deleteInvoice('${x.id}')">حذف</button></td></tr>`).join('');let t=s.reduce((a,x)=>a+x.total,0),p=s.reduce((a,x)=>a+x.paid,0);salesTotal.textContent=money(t);salesPaid.textContent=money(p);salesDue.textContent=money(t-p);salesCount.textContent=s.length}
@@ -1359,247 +1301,166 @@ async function cloudInit(){
     return true;
   }catch(e){cloudSetStatus('خطأ في إعداد الاتصال');return false}
 }
-function withTimeout(promise,ms,label){
-  return Promise.race([
-    promise,
-    new Promise((_,reject)=>setTimeout(()=>reject(new Error(label||'انتهت مهلة الاتصال.')),ms))
-  ]);
-}
-let centerResolvePromise=null;
-async function getGoogleSessionReady(){
-  if(!cloudClient && !await cloudInit())return null;
-  // OAuth callback/session restoration can take a moment on a brand-new browser.
-  // Prefer the server-confirmed user and then obtain its session/token.
-  for(let i=0;i<12;i++){
-    try{
-      const ur=await withTimeout(cloudClient.auth.getUser(),4000,'تعذر التحقق من جلسة Google.');
-      if(ur.data?.user){
-        const sr=await withTimeout(cloudClient.auth.getSession(),4000,'تعذر قراءة جلسة Google.');
-        if(sr.data?.session)return sr.data.session;
-      }
-    }catch(e){
-      if(i===11)throw e;
-    }
-    await new Promise(r=>setTimeout(r,350));
-  }
-  return null;
-}
-async function rpcCenterDirect(session){
-  const c=getCloudConfig();
-  if(!session?.access_token)throw new Error('جلسة Google لا تحتوي على رمز دخول صالح. أعد تسجيل الدخول بحساب Google.');
-  const endpoint=c.url.replace(/\/$/,'')+'/rest/v1/rpc/hakim_get_or_create_center';
-  let lastError=null;
-
-  // 1) Preferred: the secured RPC.
-  try{
-    if(cloudClient?.rpc){
-      const r=await withTimeout(cloudClient.rpc('hakim_get_or_create_center'),12000,'انتهت مهلة طلب معرّف المركز.');
-      if(!r.error){
-        const d=r.data;
-        const center=(typeof d==='string'?d:(d?.center_id||d?.[0]?.center_id||d?.[0]));
-        if(center && String(center).trim())return {center_id:String(center).trim(),source:'supabase-rpc'};
-      }else lastError=r.error;
-    }
-  }catch(e){lastError=e}
-
-  // 2) Direct REST RPC fallback using the authenticated Google access token.
-  try{
-    const controller=new AbortController();
-    const timer=setTimeout(()=>controller.abort(),15000);
-    try{
-      const res=await fetch(endpoint,{method:'POST',headers:{'apikey':c.key,'Authorization':'Bearer '+session.access_token,'Content-Type':'application/json','Accept':'application/json'},body:'{}',signal:controller.signal});
-      let body=null;try{body=await res.json()}catch(e){}
-      if(!res.ok){const msg=body?.message||body?.error_description||body?.hint||body?.details||('HTTP '+res.status);throw new Error(msg)}
-      const center=typeof body==='string'?body:(body?.center_id||body?.[0]?.center_id||body?.[0]);
-      if(center && String(center).trim())return {center_id:String(center).trim(),source:'rest-rpc'};
-      throw new Error('الخادم ردّ بدون center_id.');
-    }finally{clearTimeout(timer)}
-  }catch(e){if(e?.name==='AbortError')lastError=new Error('انتهت مهلة تحديد المركز.');else lastError=e}
-
-  // 3) Final safe fallback: use the authenticated user's own row in hakim_sync.
-  // This keeps the immutable center_id tied to auth.uid() even if the RPC is broken.
-  try{
-    const uid=session.user?.id;
-    if(!uid)throw new Error('لم يتم العثور على معرف حساب Google.');
-    const q=await withTimeout(
-      cloudClient.from('hakim_sync').select('center_id,owner_id,updated_at').eq('owner_id',uid).order('updated_at',{ascending:false}).limit(1),
-      10000,'انتهت مهلة البحث عن مركز الحساب.'
-    );
-    if(q.error)throw q.error;
-    const row=Array.isArray(q.data)?q.data[0]:q.data;
-    if(row?.center_id && String(row.center_id).trim())return {center_id:String(row.center_id).trim(),source:'hakim_sync'};
-
-    // No row: create exactly one center for this authenticated Google account.
-    for(let attempt=0;attempt<3;attempt++){
-      const cid='HK-'+crypto.randomUUID().replace(/-/g,'').slice(0,10).toUpperCase();
-      const now=new Date().toISOString();
-      const ins=await cloudClient.from('hakim_sync').insert({
-        center_id:cid,
-        owner_id:uid,
-        state:cloudState(),
-        updated_at:now
-      }).select('center_id').single();
-      if(!ins.error && ins.data?.center_id)return {center_id:String(ins.data.center_id).trim(),source:'hakim_sync-insert'};
-      // A concurrent device may have created the row. Re-read it before retrying.
-      const reread=await cloudClient.from('hakim_sync').select('center_id,owner_id,updated_at').eq('owner_id',uid).order('updated_at',{ascending:false}).limit(1);
-      if(!reread.error && reread.data?.[0]?.center_id)return {center_id:String(reread.data[0].center_id).trim(),source:'hakim_sync-reread'};
-      lastError=ins.error||reread.error||lastError;
-    }
-  }catch(e){lastError=e||lastError}
-
-  throw new Error('فشل تحديد مركز Google: '+(lastError?.message||'تعذر تنفيذ دالة تحديد المركز أو الوصول إلى جدول hakim_sync.'));
-}
 async function ensureGoogleCenter(){
-  if(centerResolvePromise)return centerResolvePromise;
-  centerResolvePromise=(async()=>{
-    try{
-      if(!cloudClient && !await cloudInit())throw new Error('تعذر الاتصال بخدمة السحابة.');
-      const session=await getGoogleSessionReady();
-      if(!session)throw new Error('جلسة Google غير موجودة أو لم تكتمل بعد. أعد تسجيل الدخول بحساب Google.');
-      const user=session.user;
-      const result=await rpcCenterDirect(session);
-      const center=String(result.center_id||'').trim();
-      if(!center)throw new Error('لم يتم استلام معرّف المركز من الخادم.');
-      const cfg=getCloudConfig();cfg.center=center;
-      localStorage.setItem('hakim_cloud_config',JSON.stringify(cfg));
-      localStorage.setItem('hakim_cloud_center',center);
-      localStorage.setItem('hakim_google_email',user.email||'');
-      localStorage.setItem('hakim_google_logged','1');
-      setDeviceActivated(session);
-      const a=document.getElementById('syncCloudCenterId');if(a)a.value=center;
-      const g=document.getElementById('syncGoogleAccount');if(g)g.value=user.email||'';
-      const lic=document.getElementById('licenseCenterId');if(lic)lic.value=center;
-      const sub=document.getElementById('subscriptionCenterId');if(sub)sub.value=center;
-      document.querySelectorAll('[data-center-id]').forEach(x=>x.textContent=center);
-      renderKnownCenterId?.();
-      cloudSetStatus('تم تحديد المركز: '+center);
-      return center;
-    }catch(e){
-      console.error('ensureGoogleCenter',e);
-      cloudSetStatus(e?.message||'تعذر تحديد المركز.');
-      return '';
-    }finally{centerResolvePromise=null}
-  })();
-  return centerResolvePromise;
-}
-async function loginWithGoogle(){
-  if(!isOnline()){showGoogleLogin('تسجيل الدخول بحساب Google لأول مرة يحتاج اتصالاً بالإنترنت.');return false}
-  if(location.protocol!=='https:'){showGoogleLogin('افتح النظام من رابط GitHub Pages الذي يبدأ بـ https://');return false}
-  if(!await cloudInit()){showGoogleLogin('تعذر الاتصال بخدمة السحابة.');return false}
-  const redirectTo='https://log27250.github.io/Hakim-Optic-/';
-  try{
-    const {error}=await cloudClient.auth.signInWithOAuth({
-      provider:'google',
-      options:{redirectTo,queryParams:{access_type:'offline',prompt:'select_account'}}
-    });
-    if(error)throw error;
-    return true;
-  }catch(e){
-    showGoogleLogin('تعذر تسجيل Google: '+(e?.message||'خطأ غير معروف'));
+  if(!cloudClient && !await cloudInit())return false;
+  const {data:sessionData}=await cloudClient.auth.getSession();
+  const session=sessionData?.session;
+  if(!session){cloudSetStatus('سجل الدخول بحساب Google أولاً');return false}
+  const {data,error}=await cloudClient.rpc('hakim_get_or_create_center');
+  if(error){
+    cloudSetStatus('تعذر إنشاء/استرجاع المركز: '+error.message);
     return false;
   }
+  const center=data?.center_id || data?.[0]?.center_id;
+  if(!center){cloudSetStatus('لم يتم استلام معرّف المركز');return false}
+  const c=getCloudConfig();
+  c.center=center;
+  localStorage.setItem('hakim_cloud_config',JSON.stringify(c));
+  localStorage.setItem('hakim_cloud_center',center);
+  localStorage.setItem('hakim_google_email',session.user?.email||'');
+  localStorage.setItem('hakim_google_logged','1');
+  if(document.getElementById('syncCloudCenterId'))document.getElementById('syncCloudCenterId').value=center;
+  if(document.getElementById('syncGoogleAccount'))document.getElementById('syncGoogleAccount').value=session.user?.email||'';
+  return true;
+}
+async function cloudConnect(){
+  if(!await cloudInit())return;
+  const sessionRes=await cloudClient.auth.getSession();
+  if(!sessionRes.data?.session){cloudSetStatus('سجل الدخول بحساب Google');return}
+  if(!await ensureGoogleCenter())return;
+  if(!sellerAuthorized)await checkSellerAuthorization();
+  if(!sellerAuthorized&&!(await checkLicense()))return;
+  const c=getCloudConfig();
+  cloudSetStatus('جارٍ الاتصال...');
+  const {data,error}=await cloudClient.from('hakim_sync').select('state,updated_at').eq('center_id',c.center).maybeSingle();
+  if(error){cloudSetStatus('فشل الاتصال: '+error.message);return}
+  if(data?.state){
+    const remoteTime=new Date(data.updated_at||0).getTime();
+    const localTime=Number(localStorage.getItem('hakim_cloud_updated_at')||0);
+    if(remoteTime>localTime){
+      applyCloudState(data.state);
+      localStorage.setItem('hakim_cloud_updated_at',String(remoteTime));
+      location.reload();
+      return;
+    }
+    if(localTime>remoteTime){
+      await cloudPush();
+    }
+  }else{
+    await cloudPush();
+  }
+  cloudSetStatus('متصل — '+(sessionRes.data.session.user?.email||''));
+  cloudSubscribe();
+}
+async function loginWithGoogle(){
+  const btn=document.querySelector('#loginScreen button[onclick*="loginWithGoogle"]');
+  try{
+    if(btn){btn.disabled=true;btn.dataset.oldText=btn.textContent;btn.textContent='جارٍ فتح Google...'}
+    if(!isOnline()){showGoogleLogin('تسجيل Google لأول مرة يحتاج اتصالاً بالإنترنت.');return}
+    if(location.protocol!=='https:'){showGoogleLogin('افتح النظام من رابط GitHub Pages الذي يبدأ بـ https://');return}
+    if(!await cloudInit()){showGoogleLogin('تعذر الاتصال بخدمة السحابة.');return}
+    const redirectTo=location.origin+location.pathname;
+    const {error}=await cloudClient.auth.signInWithOAuth({provider:'google',options:{redirectTo,queryParams:{access_type:'offline',prompt:'select_account'}}});
+    if(error)showGoogleLogin('تعذر تسجيل Google: '+error.message);
+  }catch(e){console.error('loginWithGoogle',e);showGoogleLogin('تعذر فتح تسجيل Google. تحقق من الاتصال وإعدادات Supabase ثم حاول مرة أخرى.')}
+  finally{if(btn){btn.disabled=false;btn.textContent=btn.dataset.oldText||'🔐 التسجيل بحساب Google'}}
+}
+function createAccountWithGoogle(){ loginWithGoogle(); }
+async function cloudLogoutGoogle(){
+  if(!cloudClient) await cloudInit();
+  if(!cloudClient)return;
+  const {error}=await cloudClient.auth.signOut();
+  if(error){alert('تعذر تسجيل الخروج من Google: '+error.message);return}
+  localStorage.removeItem('hakim_logged');
+  localStorage.removeItem('hakim_session');
+  localStorage.removeItem('hakim_google_logged');
+  localStorage.removeItem('hakim_google_email');
+  clearDeviceActivation();
+  cloudChannel=null;
+  location.reload();
+}
+async function loadRemoteStateBeforeLocalLogin(){
+  if(!isOnline()||!await cloudInit())return false;
+  if(!await ensureGoogleCenter())return false;
+  const c=getCloudConfig();
+  const {data,error}=await cloudClient.from('hakim_sync').select('state,updated_at').eq('center_id',c.center).maybeSingle();
+  if(error){cloudSetStatus('تعذر تحميل بيانات المركز: '+error.message);return false}
+  if(data?.state){applyCloudState(data.state);localStorage.setItem('hakim_cloud_updated_at',String(Date.parse(data.updated_at||new Date().toISOString())));return true}
+  return false;
 }
 
 async function restoreGoogleSession(){
   if(!isOnline()){
-    if(isDeviceActivated() && localStorage.getItem('hakim_accounts_initialized')==='1')return true;
-    return false;
+    if(isDeviceActivated() && localStorage.getItem('hakim_accounts_initialized')==='1')showLocalLogin();
+    else if(!isDeviceActivated())showGoogleLogin();
+    return;
   }
-  if(!await cloudInit())return false;
+  if(!await cloudInit()){if(!isDeviceActivated())showGoogleLogin('تعذر تهيئة الاتصال السحابي.');return}
+  let session=null;
   try{
-    const session=await getGoogleSessionReady();
-    if(!session){
-      if(!isDeviceActivated())showGoogleLogin();
-      return false;
+    const url=new URL(location.href);const code=url.searchParams.get('code');
+    for(let i=0;i<10;i++){
+      const r=await cloudClient.auth.getSession();session=r.data?.session||null;if(session)break;
+      if(code&&i===1){const ex=await cloudClient.auth.exchangeCodeForSession(code);if(!ex.error){session=ex.data?.session||null;if(session){url.searchParams.delete('code');url.searchParams.delete('state');history.replaceState({},document.title,url.pathname+url.search);break}}}
+      await new Promise(r=>setTimeout(r,300));
     }
-    setDeviceActivated(session);
-    localStorage.setItem('hakim_google_logged','1');
-    localStorage.setItem('hakim_google_email',session.user?.email||'');
-    const center=await ensureGoogleCenter();
-    if(!center){
-      showGoogleLogin(document.getElementById('syncCloudStatus')?.value||'تعذر تحديد معرّف المركز.');
-      return false;
-    }
-    await checkSellerAuthorization();
-    return await routeAfterGoogleAuth();
-  }catch(e){
-    console.error('restoreGoogleSession',e);
-    const msg=e?.message||'تعذر استعادة جلسة Google.';
-    if(!isDeviceActivated())showGoogleLogin(msg);
-    else cloudSetStatus(msg);
-    return false;
+  }catch(e){}
+  if(!session){
+    const u=await cloudClient.auth.getUser().catch(()=>({data:{user:null}}));
+    if(isDeviceActivated() && !u.data?.user){invalidateDeletedGoogleAccount();return}
+    if(!isDeviceActivated())showGoogleLogin();
+    return;
   }
+  setDeviceActivated(session);localStorage.setItem('hakim_google_logged','1');localStorage.setItem('hakim_google_email',session.user?.email||'');
+  const savedAdminEmail=localStorage.getItem(ADMIN_EMAIL_KEY)||'';const email=(session.user?.email||'').trim();
+  if(savedAdminEmail&&email!==savedAdminEmail){showGoogleLogin('هذا الحساب غير مرتبط بمركز الحكيم الحالي.');return}
+  if(!await ensureGoogleCenter())return;
+  await loadRemoteStateBeforeLocalLogin();
+  await checkSellerAuthorization();
+  await routeAfterGoogleAuth();
 }
 
-
-function getSubscriptionContact(){
-  return (localStorage.getItem('hakim_subscription_contact') || '249113391828').trim() || '249113391828';
-}
-function renderSubscriptionContact(){
-  const phone=getSubscriptionContact();
-  ['subscriptionContact','subscriptionContactGate','subscriptionContactAuth','sellerSupportPhone'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el){
-      if('value' in el) el.value=phone;
-      else el.textContent=phone;
-    }
-  });
-}
+const DEFAULT_SUBSCRIPTION_CONTACT='249113391828';
+function getSubscriptionContact(){return (localStorage.getItem('hakim_subscription_contact')||DEFAULT_SUBSCRIPTION_CONTACT).trim()||DEFAULT_SUBSCRIPTION_CONTACT}
 async function loadSubscriptionContact(){
   renderSubscriptionContact();
-  // The seller may later publish the contact number in the cloud.
-  // Failure here must never block center identification or subscription activation.
-  if(!cloudClient || !isOnline()) return getSubscriptionContact();
-  try{
-    const {data,error}=await cloudClient.from('hakim_settings').select('value').eq('key','subscription_contact').maybeSingle();
-    if(!error && data?.value){
-      const v=String(data.value).trim();
-      if(v){localStorage.setItem('hakim_subscription_contact',v);renderSubscriptionContact();}
-    }
-  }catch(e){ console.warn('loadSubscriptionContact',e); }
+  if(!isOnline()||!cloudClient)return getSubscriptionContact();
+  try{const {data,error}=await cloudClient.rpc('hakim_get_support_contact');if(!error&&data){localStorage.setItem('hakim_subscription_contact',String(data).trim());renderSubscriptionContact();}}catch(e){}
   return getSubscriptionContact();
 }
-function saveSellerSupportPhone(){
+function renderSubscriptionContact(){const n=getSubscriptionContact();['subscriptionContact','subscriptionContactAuth','subscriptionContactGate'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=n});const inp=document.getElementById('sellerSupportPhone');if(inp)inp.value=n}
+async function saveSellerSupportPhone(){
   if(!sellerAuthorized){alert('غير مصرح لك.');return}
   const v=(document.getElementById('sellerSupportPhone')?.value||'').trim();
-  if(!v){alert('أدخل رقم التواصل.');return}
-  localStorage.setItem('hakim_subscription_contact',v);
-  renderSubscriptionContact();
-  alert('تم حفظ رقم التواصل على هذا الجهاز.');
+  if(!/^[0-9+\- ]{7,20}$/.test(v)){alert('أدخل رقم تواصل صحيح.');return}
+  if(!isOnline()||!cloudClient){alert('يجب الاتصال بالإنترنت لحفظ رقم الاشتراكات.');return}
+  try{const {data,error}=await cloudClient.rpc('hakim_set_support_contact',{p_contact:v});if(error)throw error;localStorage.setItem('hakim_subscription_contact',String(data||v).trim());renderSubscriptionContact();alert('تم حفظ رقم الاشتراكات.');}
+  catch(e){alert('فشل حفظ الرقم: '+(e?.message||'تعذر تنفيذ العملية.'))}
 }
-
 async function ensureSubscriptionReady(){
   if(!isOnline()) return {ok:false,error:new Error('يجب الاتصال بالإنترنت لإكمال تسجيل المركز.')};
   if(!cloudClient && !await cloudInit()) return {ok:false,error:new Error('تعذر الاتصال بخدمة السحابة.')};
   let session=null;
   try{
-    session=await getGoogleSessionReady();
+    const r=await cloudClient.auth.getSession();
+    session=r.data?.session||null;
   }catch(e){ return {ok:false,error:e}; }
   if(!session){
-    return {ok:false,error:new Error('جلسة Google غير موجودة أو لم تكتمل بعد. اضغط تسجيل Google مرة أخرى.')};
+    return {ok:false,error:new Error('جلسة Google غير موجودة. اضغط تسجيل Google مرة أخرى.')};
   }
-  const center=await ensureGoogleCenter();
-  if(!center) return {ok:false,error:new Error(document.getElementById('syncCloudStatus')?.value||'تعذر إنشاء أو استرجاع معرّف المركز.')};
+  const ok=await ensureGoogleCenter();
+  if(!ok) return {ok:false,error:new Error('تعذر إنشاء أو استرجاع معرّف المركز.')};
+  const center=getCloudConfig().center||localStorage.getItem('hakim_cloud_center')||'';
   if(!center) return {ok:false,error:new Error('لم يتم استلام معرّف المركز من الخادم.')};
   return {ok:true,session,center};
 }
 
-async function showSubscriptionScreen(msg='',opts={}){
+async function showSubscriptionScreen(msg=''){
   lockApp(); showScreen('subscriptionScreen');
   const el=document.getElementById('subscriptionCenterId'), m=document.getElementById('subscriptionMessage');
   if(m)m.textContent=msg||'جارٍ الاتصال والتحقق من معرّف المركز...';
-  const known=(getCloudConfig().center||localStorage.getItem('hakim_cloud_center')||'').trim();
-  if(el)el.value=known||'جارٍ تحديد المعرف...';
-  if(!known && !opts.skipCenterLookup && isOnline()) {
-    const cid=await ensureGoogleCenter();
-    if(cid){if(el)el.value=cid;if(m&&!msg)m.textContent='اختر نوع الاشتراك للمتابعة.';}
-  }
+  if(el)el.value='جارٍ التحديد...';
   renderSubscriptionContact();
-  // When called with a known failure, don't immediately start the same center request again.
-  if(opts.skipCenterLookup){
-    if(el)el.value='—';
-    return '';
-  }
   try{
     const r=await ensureSubscriptionReady();
     if(!r.ok){
@@ -1645,19 +1506,18 @@ async function startTrialAndContinue(){
   try{
     if(btn){btn.disabled=true;btn.dataset.oldText=btn.textContent;btn.textContent='جارٍ تفعيل التجريبي...'}
     const ready=await ensureSubscriptionReady();
-    if(!ready.ok){await showSubscriptionScreen(ready.error?.message||'تعذر تجهيز الاشتراك.',{skipCenterLookup:true});return}
-    const trialRpc=await withTimeout(cloudClient.rpc('hakim_start_trial'),15000,'انتهت مهلة تفعيل الاشتراك التجريبي. تحقق من الإنترنت ثم حاول مرة أخرى.');
-    const {data,error}=trialRpc||{};
-    if(error){await showSubscriptionScreen('فشل تفعيل التجريبي: '+error.message,{skipCenterLookup:true});return}
+    if(!ready.ok){await showSubscriptionScreen(ready.error?.message||'تعذر تجهيز الاشتراك.');return}
+    const {data,error}=await cloudClient.rpc('hakim_get_license');
+    if(error){await showSubscriptionScreen('فشل تفعيل التجريبي: '+error.message);return}
     const l=Array.isArray(data)?data[0]:data;
     currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));
-    if(!licenseIsActive(l)){await showSubscriptionScreen('تعذر إنشاء الاشتراك التجريبي. تأكد من إعداد دالة الاشتراك التجريبي في Supabase.',{skipCenterLookup:true});return}
+    if(!licenseIsActive(l)){await showSubscriptionScreen('تعذر تفعيل الاشتراك التجريبي.');return}
     hideLicenseGate();
     if(localStorage.getItem('hakim_accounts_initialized')==='1'&&localStorage.getItem('hakim_admin_username'))showLocalLogin();
     else showGooglePasswordSetup();
   }catch(e){
     console.error('startTrialAndContinue',e);
-    await showSubscriptionScreen('حدث خطأ أثناء تفعيل الاشتراك التجريبي: '+(e?.message||'تعذر تنفيذ العملية.'),{skipCenterLookup:true});
+    await showSubscriptionScreen('حدث خطأ أثناء تفعيل الاشتراك التجريبي: '+(e?.message||'تعذر تنفيذ العملية.'));
   }finally{
     if(btn){btn.disabled=false;btn.textContent=btn.dataset.oldText||'🎁 الاشتراك التجريبي — 14 يوم'}
   }
@@ -1696,14 +1556,7 @@ function invalidateDeletedGoogleAccount(){
 async function verifyGoogleIdentity(){
   if(!isOnline())return true;
   if(!cloudClient&& !await cloudInit())return false;
-  try{
-    const {data,error}=await cloudClient.auth.getUser();
-    if(error||!data?.user){return false}
-    const a=JSON.parse(localStorage.getItem('hakim_google_activation')||'null');
-    // Only invalidate if we have a confirmed, different authenticated user.
-    if(a?.user_id&&a.user_id!==data.user.id){invalidateDeletedGoogleAccount();return false}
-    return true;
-  }catch(e){return false}
+  try{const {data,error}=await cloudClient.auth.getUser();if(error||!data?.user){invalidateDeletedGoogleAccount();return false}const a=JSON.parse(localStorage.getItem('hakim_google_activation')||'null');if(a?.user_id&&a.user_id!==data.user.id){invalidateDeletedGoogleAccount();return false}return true}catch(e){return false}
 }
 let sellerAuthorized=false;
 function sellerTypeLabel(t){return t==='lifetime'?'مجاني مدى الحياة':t==='yearly'?'سنوي':'تجريبي'}
@@ -1771,7 +1624,7 @@ function renderLicenseUI(l){
   if(type)type.value=licenseTypeLabel(l?.license_type);
   if(rem)rem.value=licenseRemainingText(l);
   if(exp)exp.value=formatLicenseDate(l?.expires_at);
-  if(cid)cid.value=l?.center_id||getCloudConfig().center||localStorage.getItem('hakim_cloud_center')||'—';
+  if(cid)cid.value=l?.center_id||getCloudConfig().center||'—';
   if(st)st.value=l?.active===false?'موقوف':(l?.expires_at&&new Date(l.expires_at)<new Date()?'منتهي':'فعال');
 }
 async function checkLicense(){
@@ -1795,18 +1648,11 @@ async function checkLicense(){
 
 async function retryLicenseCheck(){await checkLicense()}
 setInterval(()=>{if(currentLicense)renderLicenseUI(currentLicense)},60000);
-function renderKnownCenterId(){
-  const center=(localStorage.getItem('hakim_cloud_center')||getCloudConfig().center||'').trim();
-  if(!center)return;
-  document.querySelectorAll('[data-center-id]').forEach(x=>x.textContent=center);
-  ['globalCenterId','syncCloudCenterId','licenseCenterId','subscriptionCenterId','sellerCenterId'].forEach(id=>{const el=document.getElementById(id);if(el){if('value' in el)el.value=center;else el.textContent=center;}});
-}
 function boot(){
   // Boot must never be stopped by a non-critical UI renderer throwing an error.
   // Authentication/Google flow is initialized first; dashboard renderers are isolated.
   try{initializeDefaultCredentials();}catch(e){console.error('initializeDefaultCredentials',e)}
   try{loadCloudConfigUI();}catch(e){console.error('loadCloudConfigUI',e)}
-  try{renderKnownCenterId();}catch(e){console.error('renderKnownCenterId',e)}
    try{renderSubscriptionContact();}catch(e){console.error('renderSubscriptionContact',e)}
   try{lockApp();}catch(e){console.error('lockApp',e)}
   localStorage.removeItem('hakim_logged');
@@ -1880,136 +1726,6 @@ function importOfflineSync(input){
   };
   reader.readAsText(file);
 }
-
-/* FINAL COMMERCIAL PATCH - based on FIXED37
-   Keeps existing data/account keys and adds white-label, durable invoice numbering,
-   activity log, safer offline boot, PWA registration and recovery-request UX. */
-(function(){
-  const ACTIVITY_KEY='hakim_activity_log_v1';
-  const LOGO_KEY='hakim_center_logo';
-  const INVOICE_SEQ_KEY='hakim_invoice_sequence';
-  function readJSON(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}}
-  function activity(action,details=''){
-    try{
-      const arr=readJSON(ACTIVITY_KEY,[]);
-      arr.unshift({at:new Date().toISOString(),user:localStorage.getItem(USER_KEY)||localStorage.getItem('hakim_admin_username')||'—',role:localStorage.getItem(ROLE_KEY)||'—',action,details});
-      localStorage.setItem(ACTIVITY_KEY,JSON.stringify(arr.slice(0,500)));
-      renderActivityLog();
-    }catch(e){}
-  }
-  window.logActivity=activity;
-  window.renderActivityLog=function(){
-    const el=document.getElementById('activityLogList'); if(!el)return;
-    const arr=readJSON(ACTIVITY_KEY,[]);
-    el.innerHTML=arr.length?arr.slice(0,100).map(x=>`<div style="padding:7px;border-bottom:1px solid #eee;font-size:12px"><b>${new Date(x.at).toLocaleString('ar-SD')}</b> — ${x.action}<br><span>${x.details||''}</span></div>`).join(''):'لا توجد أنشطة مسجلة.';
-  };
-  window.exportActivityLog=function(){
-    if(typeof requireAdmin==='function'&&!requireAdmin())return;
-    const b=new Blob([JSON.stringify(readJSON(ACTIVITY_KEY,[]),null,2)],{type:'application/json'});
-    const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='hakim_activity_log_'+(typeof todayISO==='function'?todayISO():new Date().toISOString().slice(0,10))+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);activity('تصدير سجل النشاط');
-  };
-  // White-label logo
-  window.handleCenterLogo=function(input){
-    const f=input?.files?.[0]; if(!f)return;
-    if(f.size>1024*1024){alert('حجم الشعار يجب ألا يتجاوز 1MB');input.value='';return;}
-    const r=new FileReader();r.onload=()=>{localStorage.setItem(LOGO_KEY,r.result);applyCenterBranding();};r.readAsDataURL(f);
-  };
-  window.applyCenterBranding=function(){
-    const settings=typeof getSettings==='function'?getSettings():{};
-    const name=settings.centerName||'مركز الحكيم للبصريات';
-    document.querySelectorAll('.logo').forEach(x=>x.textContent=name);
-    const logo=localStorage.getItem(LOGO_KEY)||'';
-    document.querySelectorAll('.center-logo-img').forEach(x=>{x.src=logo;x.style.display=logo?'block':'none'});
-    const prev=document.getElementById('logoPreview'),wrap=document.getElementById('logoPreviewWrap');
-    if(prev&&wrap){prev.src=logo;wrap.style.display=logo?'block':'none'}
-  };
-  const oldSaveSettings=window.saveSettings;
-  window.saveSettings=function(){
-    const before=typeof getSettings==='function'?getSettings():{};
-    const r=oldSaveSettings.apply(this,arguments);
-    applyCenterBranding();
-    activity('تعديل إعدادات المركز',(before.centerName||'')+' → '+((typeof getSettings==='function'?getSettings():{}).centerName||''));
-    if(typeof cloudPush==='function'&&isOnline())cloudPush().catch(()=>{});
-    return r;
-  };
-  // Durable per-center invoice sequence: deletion/editing never reuses an old number.
-  window.nextInvoice=function(){
-    let seq=Number(localStorage.getItem(INVOICE_SEQ_KEY)||0);
-    if(!seq){
-      const sales=typeof getSales==='function'?getSales():[];
-      seq=sales.reduce((m,s)=>{const n=Number(String(s.invoiceNo||s.number||'').match(/(\d+)$/)?.[1]||0);return Math.max(m,n)},0);
-    }
-    seq+=1;localStorage.setItem(INVOICE_SEQ_KEY,String(seq));
-    const prefix=(typeof getSettings==='function'?getSettings():{}).invoicePrefix||'HK-INV-';
-    return prefix+String(seq).padStart(6,'0');
-  };
-  // Activity wrappers
-  ['deleteInvoice','settleInvoice'].forEach(fn=>{
-    if(typeof window[fn]==='function'){
-      const orig=window[fn];window[fn]=function(){const r=orig.apply(this,arguments);activity(fn==='deleteInvoice'?'حذف فاتورة':'تسوية فاتورة',String(arguments[0]||''));return r;};
-    }
-  });
-  if(typeof window.sellerActivateLicense==='function'){
-    const orig=window.sellerActivateLicense;window.sellerActivateLicense=async function(){const r=await orig.apply(this,arguments);if(window.sellerAuthorized)activity('إدارة اشتراك','تفعيل/تجديد مركز');return r;};
-  }
-  if(typeof window.changeLoginCredentials==='function'){
-    const orig=window.changeLoginCredentials;window.changeLoginCredentials=async function(){const r=await orig.apply(this,arguments);activity('تغيير بيانات الدخول');return r;};
-  }
-  // Backup/restore activity
-  if(typeof window.exportBackup==='function'){
-    const orig=window.exportBackup;window.exportBackup=function(){const r=orig.apply(this,arguments);activity('تصدير نسخة احتياطية');return r;};
-  }
-  if(typeof window.importBackup==='function'){
-    const orig=window.importBackup;window.importBackup=function(){const r=orig.apply(this,arguments);activity('استعادة نسخة احتياطية');return r;};
-  }
-  // Recovery request: local credentials cannot be securely reset from a static HTML file.
-  // This sends a request to the center email/seller rather than pretending to reset locally.
-  window.requestPasswordRecovery=function(){
-    const settings=(typeof getSettings==='function'?getSettings():{})||{};
-    const center=
-      localStorage.getItem('hakim_cloud_center') ||
-      settings.centerId ||
-      (JSON.parse(localStorage.getItem('hakim_google_activation')||'null')||{}).center_id ||
-      (JSON.parse(localStorage.getItem('hakim_cloud_config')||'null')||{}).center ||
-      'غير معروف';
-    const centerName=settings.centerName||'مركز البصريات';
-    // Password recovery for local Admin credentials is handled by the seller.
-    // Always send the request to the seller/master, never to the center's own email.
-    const to='alhakimoptic@gmail.com';
-    const subject=encodeURIComponent('طلب استعادة كلمة مرور نظام '+centerName+' | مركز '+center);
-    const body=encodeURIComponent(
-      'أرغب في استعادة كلمة مرور الدخول لنظام '+centerName+
-      '\nمعرّف المركز: '+center+
-      '\nالبريد المرتبط بالحساب: '+(localStorage.getItem('hakim_google_email')||settings.email||'غير معروف')+
-      '\n\nيرجى التواصل معي لإتمام استعادة كلمة المرور.'
-    );
-    location.href='mailto:'+to+'?subject='+subject+'&body='+body;
-  };
-  // Inject recovery button if local login screen exists.
-  function addRecovery(){
-    const card=document.querySelector('#localLoginScreen .auth-card');if(!card||card.querySelector('.password-recovery-btn'))return;
-    const b=document.createElement('button');b.type='button';b.className='btn secondary password-recovery-btn';b.style.marginTop='8px';b.textContent='📧 طلب استعادة كلمة المرور (للبائع)';b.onclick=requestPasswordRecovery;card.appendChild(b);
-  }
-  // Offline-first boot guard: an already activated device never gets pushed back to Google/Subscription
-  // merely because a transient network/auth check fails.
-  const originalRestore=window.restoreGoogleSession;
-  if(typeof originalRestore==='function'){
-    window.restoreGoogleSession=async function(){
-      if(!isOnline() && isDeviceActivated() && localStorage.getItem('hakim_accounts_initialized')==='1')return true;
-      return originalRestore.apply(this,arguments);
-    };
-  }
-  // Register PWA service worker after first online load. It caches the shell and CDN dependencies.
-  function registerPWA(){
-    if(!('serviceWorker' in navigator))return;
-    navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('PWA registration',e));
-  }
-  window.addEventListener('load',()=>{addRecovery();applyCenterBranding();renderActivityLog();registerPWA();});
-  window.addEventListener('online',()=>{if(typeof cloudPush==='function')setTimeout(()=>cloudPush().catch(()=>{}),1200)});
-  // Expose a manual cloud backup shortcut without changing existing backup format.
-  window.exportCloudSafeBackup=async function(){if(typeof requireAdmin==='function'&&!requireAdmin())return;if(typeof exportBackup==='function')exportBackup();if(typeof cloudPush==='function'&&isOnline())await cloudPush();activity('نسخة احتياطية ومزامنة');};
-})();
-
 </script>
 </body>
 </html>
