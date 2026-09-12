@@ -1761,12 +1761,9 @@ async function sellerRemoveCustomer(){
   if(!sellerAuthorized){alert('غير مصرح لك بإدارة العملاء.');return}
   const center=(document.getElementById('sellerCenterId')?.value||'').trim().toUpperCase();
   if(!center){alert('أدخل معرّف مركز العميل.');return}
-  const first=confirm('تحذير: إزالة تسجيل العميل ستلغي اشتراكه وتحذف ربط المركز وحساب Google الخاص به من Supabase. بيانات المرضى والمبيعات لن تُحذف بواسطة هذه العملية إذا كانت مرتبطة بشكل منفصل.
-
-هل تريد المتابعة؟');
+  const first=confirm('تحذير: إزالة تسجيل العميل ستلغي اشتراكه وتحذف ربط المركز وحساب Google الخاص به من Supabase. بيانات المرضى والمبيعات لن تُحذف بواسطة هذه العملية إذا كانت مرتبطة بشكل منفصل.\n\nهل تريد المتابعة؟');
   if(!first)return;
-  const second=prompt('للتأكيد اكتب معرّف المركز كما هو:
-'+center);
+  const second=prompt('للتأكيد اكتب معرّف المركز كما هو:\n'+center);
   if((second||'').trim().toUpperCase()!==center){alert('تم إلغاء العملية لأن معرّف المركز غير مطابق.');return}
   try{
     const {data,error}=await cloudClient.rpc('hakim_seller_remove_customer',{p_center_id:center});
