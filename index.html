@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مركز الحكيم للبصريات - نظام الإدارة المتكامل (Supabase)</title>
+    
+    <!-- تضمين مكتبة Supabase الرسمية عبر الـ CDN -->
+    <script src="https://jsdelivr.net"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f4f6f9; color: #333; }
+        .nav-tabs { display: flex; background: #007bff; padding: 10px; list-style: none; border-radius: 5px; margin-bottom: 20px; gap: 10px; overflow-x: auto; }
+        .nav-tabs li a { color: white; text-decoration: none; padding: 8px 15px; display: block; border-radius: 4px; font-weight: bold; }
+        .nav-tabs li a:hover, .nav-tabs li.active a { background: #0056b3; }
+        .section-panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1, h2, h3 { color: #007bff; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; display: inline-block; margin-top: 5px; }
+        .btn-primary { background-color: #007bff; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn-success { background-color: #28a745; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: right; }
+        th { background-color: #f8f9fa; }
+        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }
+        .bg-success { background-color: #28a745; }
+        .bg-danger { background-color: #dc3545; }
+        .invoice-box { border: 2px solid #333; padding: 20px; background: #fff; margin-top: 20px; max-width: 800px; }
+        .invoice-footer-rules { margin-top: 30px; padding: 15px; border-top: 2px dashed #333; background: #fff9e6; font-size: 13px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <!-- الهيدر الرئيسي -->
+    <header style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 20px;">
+        <h1 id="main-center-title">مركز الحكيم للبصريات</h1>
+        <div>
+            <span>🇸🇩 العربية | 🇬🇧 English</span>
+        </div>
+    </header>
+
+    <!-- شريط التنقل -->
+    <ul class="nav-tabs">
+        <li class="active"><a href="#sales">🛒 المبيعات والفواتير</a></li>
+        <li><a href="#admin-panel">👑 لوحة الإدارة (البائع)</a></li>
+        <li><a href="#settings">⚙ الإعدادات</a></li>
+    </ul>
+
+    <!-- 🛠 لوحة البائع - السحب والتعطيل من Supabase -->
+    <div id="admin-panel" class="section-panel">
+        <h3>🛠 لوحة البائع — إدارة اشتراكات العملاء</h3>
+        <p style="font-size: 13px; color: #666;">العمليات هنا تُعدّل مباشرة في جدول `subscriptions` على سحابة Supabase.</p>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div class="form-group">
+                <label>معرّف مركز العميل (ID):</label>
+                <input type="text" id="seller-center-id" class="form-control" placeholder="أدخل ID العميل">
+            </div>
+            <div class="form-group">
+                <label>نوع الاشتراك:</label>
+                <select id="seller-sub-type" class="form-control">
+                    <option value="اشتراك سنوي">اشتراك سنوي</option>
+                    <option value="مجاني مدى الحياة">مجاني مدى الحياة</option>
+                    <option value="تجريبي">تجريبي</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>المدة بالأيام:</label>
+                <input type="number" id="seller-duration" class="form-control" value="365">
+            </div>
+        </div>
+
+        <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="activateSubscription()" class="btn btn-success">🔐 تفعيل الاشتراك</button>
+            <button onclick="disableSubscription()" class="btn btn-danger">⛔ تعطيل الاشتراك</button>
+            <button onclick="removeClient()" class="btn btn-warning">🧹 إزالة تسجيل العميل</button>
+            <button onclick="fetchClientsFromSupabase()" class="btn btn-primary">🔄 تحديث القائمة من السحابة</button>
+        </div>
+
+        <h4 style="margin-top: 25px;">قائمة المشتركين الحية (Supabase):</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>المركز (ID)</th>
+                    <th>النوع</th>
+                    <th>الانتهاء</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody id="clients-list-tbody">
+                <tr><td colspan="4" style="text-align:center; color:#999;">جاري جلب البيانات...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ⚙ صفحة الإعدادات لحفظ بيانات المركز والقوانين -->
+    <div id="settings" class="section-panel">
+        <h2>⚙ إعدادات النظام</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div class="form-group">
+                <label>اسم المركز:</label>
+                <input type="text" id="settings-center-name" class="form-control" value="مركز الحكيم للبصريات">
+            </div>
+            <div class="form-group">
+                <label>الهاتف:</label>
+                <input type="text" id="settings-center-phone" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>العنوان:</label>
+                <input type="text" id="settings-center-address" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label>تحذيرات / قوانين المركز — تظهر في الفاتورة:</label>
+            <textarea id="settings-center-rules" class="form-control" rows="4" placeholder="اكتب القوانين هنا..."></textarea>
+        </div>
+
+        <button onclick="saveCenterSettings()" class="btn btn-success">حفظ إعدادات المركز في السحابة</button>
+    </div>
+
+    <!-- 🛒 المبيعات ومعاينة الفاتورة والتنبيهات المدمجة -->
+    <div id="sales" class="section-panel">
+        <h2>🛒 المبيعات والفواتير</h2>
+        <div class="invoice-box">
+            <h3 id="invoice-header-center-name">مركز الحكيم للبصريات</h3>
+            <p id="invoice-header-center-details">تلفون: — | العنوان: —</p>
+            <hr>
+            <p><strong>فاتورة رقم:</strong> HK-INV-1024</p>
+            <div id="invoice-printed-rules" class="invoice-footer-rules" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 🛠 1. إعداد الاتصال بـ Supabase (استبدل القيم أدناه ببيانات مشروعك الخاصة)
+        const SUPABASE_URL = "https://supabase.co"; 
+        const SUPABASE_ANON_KEY = "your-anon-key-here";
+        
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 2. دالة جلب العملاء وعرضهم في لوحة البائع
+        async function fetchClientsFromSupabase() {
+            const tbody = document.getElementById('clients-list-tbody');
+            
+            // جلب البيانات من جدول يسمى 'subscriptions'
+            let { data: subscriptions, error } = await supabase
+                .from('subscriptions')
+                .select('*');
+
+            if (error) {
+                console.error("خطأ في جلب المشتركين:", error);
+                tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">فشل الاتصال بقاعدة البيانات</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            subscriptions.forEach(client => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${client.center_id}</strong></td>
+                    <td>${client.type}</td>
+                    <td>${client.expiration_date}</td>
+                    <td><span class="status-badge ${client.status === 'نشط' ? 'bg-success' : 'bg-danger'}">${client.status}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ⛔ 3. دالة تفعيل أو تعطيل الاشتراك عن طريق الـ ID (التعديل المطلوب)
+        async function updateSubscriptionStatus(status) {
+            const centerId = document.getElementById('seller-center-id').value.trim();
+            const subType = document.getElementById('seller-sub-type').value;
+            const duration = parseInt(document.getElementById('seller-duration').value) || 365;
+
+            if (!centerId) {
+                alert('⚠️ الرجاء إدخال معرّف مركز العميل (ID)!');
+                return;
+            }
+
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + duration);
+            const formattedDate = expirationDate.toISOString().split('T')[0];
+
+            // تحديث أو إدخال (Upsert) البيانات في Supabase
+            const { error } = await supabase
+                .from('subscriptions')
+                .upsert({ 
+                    center_id: centerId, 
+                    type: subType, 
+                    expiration_date: formattedDate, 
+                    status: status 
+                }, { onConflict: 'center_id' });
+
+            if (error) {
+                alert('❌ فشل التحديث في Supabase: ' + error.message);
+            } else {
+ 
