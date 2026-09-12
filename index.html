@@ -5,6 +5,13 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>مركز الحكيم للبصريات</title>
+<meta name="theme-color" content="#2563eb"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<link rel="manifest" href="./manifest.webmanifest"/>
+<link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png"/>
+
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f5f7fb;color:#1f2937}
 .sidebar{position:fixed;right:0;top:0;width:240px;height:100vh;background:#102a43;color:white;padding:24px 16px}
@@ -301,7 +308,7 @@ table th, table td { padding: 8px 6px; font-size: 13px; }
 <div><label>كلمة المرور</label><input id="adminNewUserPassword" type="password" autocomplete="new-password"></div>
 </div><button class="btn" style="margin-top:10px" onclick="adminAddUser()">+ إضافة مستخدم</button>
 <div style="overflow:auto;margin-top:14px"><table><thead><tr><th>المستخدم</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="adminUsersRows"></tbody></table></div></div>
-<div id="sellerLicensePanel" class="panel seller-only" style="margin-bottom:15px;display:none;border:2px solid #7c3aed"><h3>🛠️ لوحة البائع — إدارة اشتراكات العملاء</h3><p>هذه اللوحة لا تظهر إلا لحساب Google المصرّح له كبائع. من هنا يمكنك تفعيل أو تجديد اشتراك أي مركز.</p><div class="form"><div class="full"><label>معرّف مركز العميل</label><input id="sellerCenterId" placeholder="مثال: HK-XXXXXXXXXX" /></div><div><label>نوع الاشتراك</label><select id="sellerLicenseType"><option value="yearly">اشتراك سنوي</option><option value="lifetime">مجاني مدى الحياة</option><option value="trial">تجريبي</option></select></div><div><label>المدة بالأيام (للتجريبي/السنوي)</label><input id="sellerLicenseDays" type="number" min="1" value="365" /></div><div class="full"><button class="btn" onclick="sellerActivateLicense()">🔐 تفعيل الاشتراك</button><button class="btn secondary" style="margin-right:8px" onclick="sellerLoadLicenses()">🔄 تحديث قائمة العملاء</button></div><div class="full" style="margin-top:10px"><label>رقم التواصل للاشتراكات</label><input id="sellerSupportPhone" inputmode="tel" placeholder="249XXXXXXXXX"><button class="btn secondary" style="margin-top:8px" onclick="saveSellerSupportPhone()">💾 حفظ رقم الاشتراكات</button></div></div><div style="overflow:auto;margin-top:14px"><table><thead><tr><th>المركز</th><th>النوع</th><th>الانتهاء</th><th>الحالة</th></tr></thead><tbody id="sellerLicenseRows"></tbody></table></div></div>
+<div id="sellerLicensePanel" class="panel seller-only" style="margin-bottom:15px;display:none;border:2px solid #7c3aed"><h3>🛠️ لوحة البائع — إدارة اشتراكات العملاء</h3><p>هذه اللوحة لا تظهر إلا لحساب Google المصرّح له كبائع. من هنا يمكنك تفعيل أو تجديد اشتراك أي مركز.</p><div class="form"><div class="full"><label>معرّف مركز العميل</label><input id="sellerCenterId" placeholder="مثال: HK-XXXXXXXXXX" /></div><div><label>نوع الاشتراك</label><select id="sellerLicenseType"><option value="yearly">اشتراك سنوي</option><option value="lifetime">مجاني مدى الحياة</option><option value="trial">تجريبي</option></select></div><div><label>المدة بالأيام (للتجريبي/السنوي)</label><input id="sellerLicenseDays" type="number" min="1" value="365" /></div><div class="full"><button class="btn" onclick="sellerActivateLicense()">🔐 تفعيل الاشتراك</button><button class="btn secondary" style="margin-right:8px" onclick="sellerDisableLicense()">⛔ تعطيل الاشتراك</button><button class="btn secondary" style="margin-right:8px" onclick="sellerRemoveCustomer()">🧹 إزالة تسجيل العميل</button><button class="btn secondary" style="margin-right:8px" onclick="sellerLoadLicenses()">🔄 تحديث قائمة العملاء</button></div><div class="full" style="margin-top:10px"><label>رقم التواصل للاشتراكات</label><input id="sellerSupportPhone" inputmode="tel" placeholder="249XXXXXXXXX"><button class="btn secondary" style="margin-top:8px" onclick="saveSellerSupportPhone()">💾 حفظ رقم الاشتراكات</button></div></div><div style="overflow:auto;margin-top:14px"><table><thead><tr><th>المركز</th><th>النوع</th><th>الانتهاء</th><th>الحالة</th></tr></thead><tbody id="sellerLicenseRows"></tbody></table></div></div>
 
 <div class="panel"><h3>📦 إدارة المخزون</h3><p>تعديل وإضافة وحذف الأصناف متاح من هنا فقط.</p><button class="btn" onclick="show('inventory')">فتح إدارة المخزون</button><button class="btn secondary" style="margin-right:8px" onclick="newInventoryItem()">+ إضافة صنف</button></div>
 <div class="panel"><h3>⚙️ إعدادات النظام</h3><p>تعديل بيانات المركز وإعدادات الحساب.</p><button class="btn" onclick="show('settings')">فتح الإعدادات</button></div>
@@ -1484,7 +1491,10 @@ async function ensureGoogleCenter(){
 }
 async function loginWithGoogle(){
   if(!isOnline()){showGoogleLogin('تسجيل الدخول بحساب Google لأول مرة يحتاج اتصالاً بالإنترنت.');return false}
-  if(location.protocol!=='https:'){showGoogleLogin('افتح النظام من رابط GitHub Pages الذي يبدأ بـ https://');return false}
+  if(location.protocol!=='https:'){
+    showGoogleLogin('هذه النسخة المحلية تحتاج تفعيل Google لأول مرة من النسخة المنشورة. بعد التفعيل افتحها بدون إنترنت من الجهاز.');
+    return false
+  }
   if(!await cloudInit()){showGoogleLogin('تعذر الاتصال بخدمة السحابة.');return false}
   const redirectTo='https://log27250.github.io/Hakim-Optic-/';
   try{
@@ -1531,6 +1541,42 @@ async function restoreGoogleSession(){
   }
 }
 
+
+function getSubscriptionContact(){
+  return (localStorage.getItem('hakim_subscription_contact') || '249113391828').trim() || '249113391828';
+}
+function renderSubscriptionContact(){
+  const phone=getSubscriptionContact();
+  ['subscriptionContact','subscriptionContactGate','subscriptionContactAuth','sellerSupportPhone'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      if('value' in el) el.value=phone;
+      else el.textContent=phone;
+    }
+  });
+}
+async function loadSubscriptionContact(){
+  renderSubscriptionContact();
+  // The seller may later publish the contact number in the cloud.
+  // Failure here must never block center identification or subscription activation.
+  if(!cloudClient || !isOnline()) return getSubscriptionContact();
+  try{
+    const {data,error}=await cloudClient.from('hakim_settings').select('value').eq('key','subscription_contact').maybeSingle();
+    if(!error && data?.value){
+      const v=String(data.value).trim();
+      if(v){localStorage.setItem('hakim_subscription_contact',v);renderSubscriptionContact();}
+    }
+  }catch(e){ console.warn('loadSubscriptionContact',e); }
+  return getSubscriptionContact();
+}
+function saveSellerSupportPhone(){
+  if(!sellerAuthorized){alert('غير مصرح لك.');return}
+  const v=(document.getElementById('sellerSupportPhone')?.value||'').trim();
+  if(!v){alert('أدخل رقم التواصل.');return}
+  localStorage.setItem('hakim_subscription_contact',v);
+  renderSubscriptionContact();
+  alert('تم حفظ رقم التواصل على هذا الجهاز.');
+}
 
 async function ensureSubscriptionReady(){
   if(!isOnline()) return {ok:false,error:new Error('يجب الاتصال بالإنترنت لإكمال تسجيل المركز.')};
@@ -1610,12 +1656,12 @@ async function startTrialAndContinue(){
     if(btn){btn.disabled=true;btn.dataset.oldText=btn.textContent;btn.textContent='جارٍ تفعيل التجريبي...'}
     const ready=await ensureSubscriptionReady();
     if(!ready.ok){await showSubscriptionScreen(ready.error?.message||'تعذر تجهيز الاشتراك.',{skipCenterLookup:true});return}
-    const trialRpc=await withTimeout(cloudClient.rpc('hakim_get_license'),15000,'انتهت مهلة تفعيل الاشتراك التجريبي. تحقق من الإنترنت ثم حاول مرة أخرى.');
+    const trialRpc=await withTimeout(cloudClient.rpc('hakim_start_trial'),15000,'انتهت مهلة تفعيل الاشتراك التجريبي. تحقق من الإنترنت ثم حاول مرة أخرى.');
     const {data,error}=trialRpc||{};
     if(error){await showSubscriptionScreen('فشل تفعيل التجريبي: '+error.message,{skipCenterLookup:true});return}
     const l=Array.isArray(data)?data[0]:data;
     currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));
-    if(!licenseIsActive(l)){await showSubscriptionScreen('تعذر تفعيل الاشتراك التجريبي.',{skipCenterLookup:true});return}
+    if(!licenseIsActive(l)){await showSubscriptionScreen('تعذر إنشاء الاشتراك التجريبي. تأكد من إعداد دالة الاشتراك التجريبي في Supabase.',{skipCenterLookup:true});return}
     hideLicenseGate();
     if(localStorage.getItem('hakim_accounts_initialized')==='1'&&localStorage.getItem('hakim_admin_username'))showLocalLogin();
     else showGooglePasswordSetup();
@@ -1699,6 +1745,37 @@ async function sellerLoadLicenses(){
     if(body)body.innerHTML=rows.map(r=>`<tr><td>${r.center_id||'—'}</td><td>${sellerTypeLabel(r.license_type)}</td><td>${sellerDate(r.expires_at)}</td><td>${sellerStatus(r)}</td></tr>`).join('')||'<tr><td colspan="4">لا توجد مراكز بعد.</td></tr>';
   }catch(e){if(body)body.innerHTML='<tr><td colspan="4">تعذر تحميل قائمة الاشتراكات.</td></tr>';}
 }
+async function sellerDisableLicense(){
+  if(!sellerAuthorized){alert('غير مصرح لك بإدارة الاشتراكات.');return}
+  const center=(document.getElementById('sellerCenterId')?.value||'').trim().toUpperCase();
+  if(!center){alert('أدخل معرّف مركز العميل.');return}
+  if(!confirm('سيتم تعطيل اشتراك المركز '+center+' فوراً بدون حذف تسجيله أو بياناته. هل تريد المتابعة؟'))return;
+  try{
+    const {data,error}=await cloudClient.rpc('hakim_seller_disable_license',{p_center_id:center});
+    if(error) throw error;
+    alert('تم تعطيل اشتراك المركز '+center+' بنجاح.');
+    sellerLoadLicenses();
+  }catch(e){alert('فشل تعطيل الاشتراك: '+(e?.message||'تعذر تنفيذ العملية.'));}
+}
+async function sellerRemoveCustomer(){
+  if(!sellerAuthorized){alert('غير مصرح لك بإدارة العملاء.');return}
+  const center=(document.getElementById('sellerCenterId')?.value||'').trim().toUpperCase();
+  if(!center){alert('أدخل معرّف مركز العميل.');return}
+  const first=confirm('تحذير: إزالة تسجيل العميل ستلغي اشتراكه وتحذف ربط المركز وحساب Google الخاص به من Supabase. بيانات المرضى والمبيعات لن تُحذف بواسطة هذه العملية إذا كانت مرتبطة بشكل منفصل.
+
+هل تريد المتابعة؟');
+  if(!first)return;
+  const second=prompt('للتأكيد اكتب معرّف المركز كما هو:
+'+center);
+  if((second||'').trim().toUpperCase()!==center){alert('تم إلغاء العملية لأن معرّف المركز غير مطابق.');return}
+  try{
+    const {data,error}=await cloudClient.rpc('hakim_seller_remove_customer',{p_center_id:center});
+    if(error) throw error;
+    alert('تمت إزالة تسجيل العميل '+center+' من Supabase.');
+    const input=document.getElementById('sellerCenterId');if(input)input.value='';
+    sellerLoadLicenses();
+  }catch(e){alert('فشل إزالة العميل: '+(e?.message||'تعذر تنفيذ العملية.'));}
+}
 async function sellerActivateLicense(){
   if(!sellerAuthorized){alert('غير مصرح لك بإدارة الاشتراكات.');return}
   const center=(document.getElementById('sellerCenterId')?.value||'').trim().toUpperCase();
@@ -1763,7 +1840,7 @@ function renderKnownCenterId(){
   const center=(localStorage.getItem('hakim_cloud_center')||getCloudConfig().center||'').trim();
   if(!center)return;
   document.querySelectorAll('[data-center-id]').forEach(x=>x.textContent=center);
-  ['globalCenterId','syncCloudCenterId','licenseCenterId','subscriptionCenterId'].forEach(id=>{const el=document.getElementById(id);if(el)el.value!==undefined?el.value=center:el.textContent=center});
+  ['globalCenterId','syncCloudCenterId','licenseCenterId','subscriptionCenterId','sellerCenterId'].forEach(id=>{const el=document.getElementById(id);if(el){if('value' in el)el.value=center;else el.textContent=center;}});
 }
 function boot(){
   // Boot must never be stopped by a non-critical UI renderer throwing an error.
@@ -1777,8 +1854,12 @@ function boot(){
   localStorage.removeItem('hakim_session');
   const activated=isDeviceActivated();
   const accountsReady=localStorage.getItem('hakim_accounts_initialized')==='1' && !!localStorage.getItem('hakim_admin_username');
-  if(!activated){showGoogleLogin();}
-  else if(!accountsReady){showGooglePasswordSetup();}
+  if(!activated){
+    showGoogleLogin();
+  }
+  else if(!accountsReady){
+    showGooglePasswordSetup();
+  }
   else{showLocalLogin();}
   window.addEventListener('online',()=>{try{restoreGoogleSession()}catch(e){console.error('restoreGoogleSession',e)}});
   window.addEventListener('offline',()=>{if(isDeviceActivated()){const st=document.getElementById('syncCloudStatus');if(st)st.value='وضع عدم الاتصال — النظام يعمل محلياً';}});
@@ -1964,12 +2045,40 @@ function importOfflineSync(input){
     };
   }
   // Register PWA service worker after first online load. It caches the shell and CDN dependencies.
+  async function warmOfflineShell(){
+    try{
+      if(!('caches' in window) || !navigator.onLine)return;
+      const cache=await caches.open('hakim-optics-offline-v44');
+      const urls=[
+        './',
+        './index.html',
+        './manifest.webmanifest',
+        './sw.js',
+        'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
+      ];
+      for(const u of urls){
+        try{
+          const res=await fetch(u,{cache:'no-store'});
+          if(res && (res.ok || res.type==='opaque')) await cache.put(u,res.clone());
+        }catch(e){}
+      }
+    }catch(e){}
+  }
   function registerPWA(){
     if(!('serviceWorker' in navigator))return;
-    navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(e=>console.warn('PWA registration',e));
+    navigator.serviceWorker.register('./sw.js',{scope:'./'})
+      .then(()=>warmOfflineShell())
+      .catch(e=>console.warn('PWA registration',e));
   }
   window.addEventListener('load',()=>{addRecovery();applyCenterBranding();renderActivityLog();registerPWA();});
-  window.addEventListener('online',()=>{if(typeof cloudPush==='function')setTimeout(()=>cloudPush().catch(()=>{}),1200)});
+  window.addEventListener('online',()=>{
+    if(typeof cloudPush==='function')setTimeout(()=>cloudPush().catch(()=>{}),1200);
+    setTimeout(()=>warmOfflineShell(),1500);
+  });
+  window.addEventListener('offline',()=>{
+    const el=document.getElementById('syncCloudStatus');
+    if(el)el.value='غير متصل — يعمل محلياً';
+  });
   // Expose a manual cloud backup shortcut without changing existing backup format.
   window.exportCloudSafeBackup=async function(){if(typeof requireAdmin==='function'&&!requireAdmin())return;if(typeof exportBackup==='function')exportBackup();if(typeof cloudPush==='function'&&isOnline())await cloudPush();activity('نسخة احتياطية ومزامنة');};
 })();
