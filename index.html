@@ -121,7 +121,7 @@ table th, table td { padding: 8px 6px; font-size: 13px; }
 @media print{.print-actions{display:none!important}}
 #appShell{display:none}#appShell.unlocked{display:block}.auth-screen{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:#f5f7fb;padding:20px}.auth-card{width:min(520px,100%);background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 35px #00000018;text-align:center}.auth-card h2{margin:0 0 8px}.auth-card p{color:#64748b;line-height:1.7}.auth-card .form{text-align:right}.auth-error{color:#b91c1c;margin-top:10px;min-height:20px}.auth-status{color:#475569;margin-top:10px;min-height:20px}.auth-screen input,.auth-screen select{font-size:15px;padding:12px}.auth-primary{width:100%;margin-top:12px;padding:12px}.auth-link{background:none;border:0;color:#2563eb;cursor:pointer;margin-top:10px}.admin-only{display:none!important}.role-admin .admin-only{display:block!important}.role-user .admin-only{display:none!important}.seller-only{display:none!important}.seller-authorized .seller-only{display:block!important}.license-client-panel{margin-top:15px;border:2px solid #2563eb}.auth-choice-note{font-weight:700;color:#334155}.license-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.license-actions .btn{flex:1;min-width:150px}.admin-badge{display:inline-block;background:#f59e0b;color:#fff;border-radius:999px;padding:4px 9px;font-size:12px;margin-right:8px}.user-badge{display:inline-block;background:#64748b;color:#fff;border-radius:999px;padding:4px 9px;font-size:12px;margin-right:8px}.lang-select{font-family:Arial,sans-serif}
 .license-gate{position:fixed;inset:0;z-index:100000;background:#f5f7fb;display:none;align-items:center;justify-content:center;padding:20px}.license-gate.show{display:flex}.license-card{width:min(520px,100%);background:#fff;border-radius:16px;padding:28px;box-shadow:0 8px 35px #00000018;text-align:center}.license-card h2{margin:0 0 10px}.license-card p{color:#64748b;line-height:1.8}.license-card .btn{margin-top:10px}
-</style>
+textarea{font-family:inherit;resize:vertical}.invoice-center-header{text-align:center}.invoice-center-header h2{margin-bottom:4px}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -314,7 +314,7 @@ table th, table td { padding: 8px 6px; font-size: 13px; }
 <div class="panel"><h3>⚙️ إعدادات النظام</h3><p>تعديل بيانات المركز وإعدادات الحساب.</p><button class="btn" onclick="show('settings')">فتح الإعدادات</button></div>
 <div class="panel"><h3>💾 البيانات</h3><p>النسخ الاحتياطي والاستعادة متاحة للـAdmin فقط.</p><button class="btn secondary" onclick="exportBackup()">تصدير نسخة</button><button class="btn secondary" style="margin-right:8px" onclick="document.getElementById('backupFile').click()">استعادة نسخة</button></div>
 </div></section>
-<section class="hidden" id="settings"><div class="top"><div class="title"><h1>الإعدادات</h1><p>بيانات المركز والحساب السحابي</p></div></div><div class="panel"><div class="form"><div><label>اسم المركز</label><input id="setCenterName" value="مركز الحكيم للبصريات"/></div><div><label>الهاتف</label><input id="setPhone"/></div><div><label>العنوان</label><input id="setAddress"/></div><div><label>اسم المسؤول</label><input id="setManager"/></div><div><label>العملة</label><input id="setCurrency" value="جنيه سوداني"/></div><div><label>بادئة الفواتير</label><input id="setInvoicePrefix" value="HK-INV-"/></div><div><label>البريد الإلكتروني</label><input autocomplete="email" id="setEmail" placeholder="example@email.com" type="email"/></div><div><label>شعار المركز</label><input id="setLogoFile" type="file" accept="image/png,image/jpeg,image/webp" onchange="handleCenterLogo(this)"/></div><div class="full"><div id="logoPreviewWrap" style="display:none;margin:8px 0;text-align:center"><img id="logoPreview" style="max-height:80px;max-width:220px;object-fit:contain"/></div><button class="btn" onclick="saveSettings()">حفظ إعدادات المركز</button></div></div></div><div class="panel" style="margin-top:15px"><h3>🔐 أمان الدخول</h3><p>الدخول إلى النظام يتم باستخدام حساب Google فقط.</p><div class="form"><div><label>اسم المستخدم الحالي</label><input id="setUser" value="Alhakim"/></div><div><label>كلمة المرور الحالية</label><input id="setCurrentPassword" type="password"/></div><div><label>اسم المستخدم الجديد</label><input id="setNewUser"/></div><div><label>كلمة المرور الجديدة</label><input id="setNewPassword" type="password"/></div></div><button class="btn danger" onclick="changeLoginCredentials()">تغيير بيانات الدخول</button></div><div class="panel" style="margin-top:15px">
+<section class="hidden" id="settings"><div class="top"><div class="title"><h1>الإعدادات</h1><p>بيانات المركز والحساب السحابي</p></div></div><div class="panel"><div class="form"><div><label>اسم المركز</label><input id="setCenterName" value="مركز الحكيم للبصريات"/></div><div><label>الهاتف</label><input id="setPhone"/></div><div><label>العنوان</label><input id="setAddress"/></div><div><label>اسم المسؤول</label><input id="setManager"/></div><div><label>العملة</label><input id="setCurrency" value="جنيه سوداني"/></div><div><label>بادئة الفواتير</label><input id="setInvoicePrefix" value="HK-INV-"/></div><div class="full"><label>تحذيرات / قوانين المركز — تظهر في نسخة المركز فقط</label><textarea id="setInvoiceCenterNote" rows="4" placeholder="مثال: هذه الفاتورة نسخة المركز&#10;لا تُسترجع العدسات بعد التصنيع&#10;يرجى الاحتفاظ بالفاتورة"></textarea><small style="display:block;color:#64748b;margin-top:4px">اكتب هنا أي تحذيرات أو قوانين خاصة بالمركز. لن تظهر في نسخة المريض.</small></div><div><label>البريد الإلكتروني</label><input autocomplete="email" id="setEmail" placeholder="example@email.com" type="email"/></div><div><label>شعار المركز</label><input id="setLogoFile" type="file" accept="image/png,image/jpeg,image/webp" onchange="handleCenterLogo(this)"/></div><div class="full"><div id="logoPreviewWrap" style="display:none;margin:8px 0;text-align:center"><img id="logoPreview" style="max-height:80px;max-width:220px;object-fit:contain"/></div><button class="btn" onclick="saveSettings()">حفظ إعدادات المركز</button></div></div></div><div class="panel" style="margin-top:15px"><h3>🔐 أمان الدخول</h3><p>الدخول إلى النظام يتم باستخدام حساب Google فقط.</p><div class="form"><div><label>اسم المستخدم الحالي</label><input id="setUser" value="Alhakim"/></div><div><label>كلمة المرور الحالية</label><input id="setCurrentPassword" type="password"/></div><div><label>اسم المستخدم الجديد</label><input id="setNewUser"/></div><div><label>كلمة المرور الجديدة</label><input id="setNewPassword" type="password"/></div></div><button class="btn danger" onclick="changeLoginCredentials()">تغيير بيانات الدخول</button></div><div class="panel" style="margin-top:15px">
 <h3>☁️ الحساب السحابي والمزامنة</h3>
 <p style="color:#64748b;font-size:12px">
 كل حساب Google له مركز وبيانات مستقلة. إذا دخلت بنفس حساب Google في جهاز آخر ستظهر نفس بياناتك تلقائيًا.
@@ -844,8 +844,19 @@ function printInvoice(id){
     <p><b>Add:</b> ${e.add||'—'} &nbsp;&nbsp; <b>PD:</b> ${e.pd||'—'}</p>
   `;
 
+  const settings=getSettings();
+  const centerName=settings.centerName||center||'مركز الحكيم للبصريات';
+  const centerAddress=(settings.address||'').trim();
+  const centerPhone=(settings.phone||'').trim();
+  const centerNote=(settings.invoiceCenterNote||'تنبيه: هذه الفاتورة نسخة المركز').trim();
+  const centerHeader = `
+    <h2>${centerName}</h2>
+    ${centerAddress?`<p><b>العنوان:</b> ${centerAddress}</p>`:''}
+    ${centerPhone?`<p><b>الهاتف:</b> ${centerPhone}</p>`:''}
+  `;
+
   const patient = `
-    <h2>${center}</h2>
+    ${centerHeader}
     <p><b>رقم الفاتورة:</b> ${s.id} &nbsp; | &nbsp; <b>التاريخ:</b> ${s.date}</p>
     <p><b>المريض:</b> ${s.patientName||'—'} &nbsp; | &nbsp; <b>الهاتف:</b> ${s.phone||'—'}</p>
     <p><b>الطبيب الفاحص:</b> ${e.doctorName||'—'}</p>
@@ -874,6 +885,7 @@ function printInvoice(id){
       ${patient}
       ${prescription}
       ${includeSales?sales:''}
+      ${includeSales && centerNote ? `<p class="center-note"><b>${centerNote}</b></p>` : ''}
     </section>`;
   }
 
@@ -889,6 +901,7 @@ function printInvoice(id){
     h2{text-align:center;margin:0 0 5px;font-size:18px}
     h4{margin:8px 0 4px}
     .copy-label{text-align:center;font-weight:bold;font-size:11px;margin-bottom:5px}
+    .center-note{text-align:center;margin-top:8px;padding-top:5px;border-top:1px dashed #999;font-size:11px}
     table{width:100%;border-collapse:collapse;margin:6px 0;font-size:11px}
     th,td{border:1px solid #999;padding:4px;text-align:center}
     p{margin:4px 0;font-size:11px}
@@ -1207,8 +1220,8 @@ function renderDailyReport(){
 
 function renderReports(){ensureStockLedger();let s=getSales(),e=getAllExams(),t=s.reduce((a,x)=>a+Number(x.total||0),0),p=s.reduce((a,x)=>a+Number(x.paid||0),0);reportPatients.textContent=patients.length;reportExams.textContent=e.length;reportSales.textContent=s.length;reportTotalSales.textContent=money(t);reportTotalPaid.textContent=money(p);reportTotalDue.textContent=money(s.reduce((a,x)=>a+Number(x.due||0),0));reportStockCost.textContent=money(inventoryClosingCost());if(document.getElementById('reportMonth')&&!document.getElementById('reportMonth').value)document.getElementById('reportMonth').value=todayISO().slice(0,7);if(document.getElementById('dailyReportDate')&&!document.getElementById('dailyReportDate').value)document.getElementById('dailyReportDate').value=todayISO();renderMonthlyAccounting();renderDailyReport();renderDoctorReport()}
 function updateDashboard(){let s=getSales(),e=getAllExams(),t=s.reduce((a,x)=>a+x.total,0),d=s.reduce((a,x)=>a+x.due,0),n=document.querySelectorAll('#dashboard .card .num');if(n[0])n[0].textContent=patients.length;if(n[1])n[1].textContent=e.length;if(n[2])n[2].textContent=money(t);if(n[3])n[3].textContent=money(d)}
-function saveSettings(){if(!requireAdmin())return;let email=(setEmail?.value||'').trim();if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('أدخل بريداً إلكترونياً صحيحاً');let old=getSettings();put(K.settings,{...old,centerName:setCenterName.value,phone:setPhone.value,address:setAddress.value,manager:setManager.value,currency:setCurrency.value,invoicePrefix:setInvoicePrefix.value,email});alert('تم حفظ إعدادات المركز')}
-function loadSettings(){let x=getSettings();setCenterName.value=x.centerName||'مركز الحكيم للبصريات';setPhone.value=x.phone||'';setAddress.value=x.address||'';setManager.value=x.manager||'';setCurrency.value=x.currency||'جنيه سوداني';setInvoicePrefix.value=x.invoicePrefix||'HK-INV-';if(setEmail)setEmail.value=x.email||'';if(setUser)setUser.value=x.user||'Alhakim'}
+function saveSettings(){if(!requireAdmin())return;let email=(setEmail?.value||'').trim();if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('أدخل بريداً إلكترونياً صحيحاً');let old=getSettings();put(K.settings,{...old,centerName:setCenterName.value,phone:setPhone.value,address:setAddress.value,manager:setManager.value,currency:setCurrency.value,invoicePrefix:setInvoicePrefix.value,email,invoiceCenterNote:(document.getElementById('setInvoiceCenterNote')?.value||'').trim()});alert('تم حفظ إعدادات المركز')}
+function loadSettings(){let x=getSettings();setCenterName.value=x.centerName||'مركز الحكيم للبصريات';setPhone.value=x.phone||'';setAddress.value=x.address||'';setManager.value=x.manager||'';setCurrency.value=x.currency||'جنيه سوداني';setInvoicePrefix.value=x.invoicePrefix||'HK-INV-';if(setEmail)setEmail.value=x.email||'';if(document.getElementById('setInvoiceCenterNote'))document.getElementById('setInvoiceCenterNote').value=x.invoiceCenterNote||'تنبيه: هذه الفاتورة نسخة المركز';if(setUser)setUser.value=x.user||'Alhakim'}
 function exportBackup(){if(!requireAdmin())return;let d={version:'v8',date:new Date().toISOString(),patients,exams:getAllExams(),sales:getSales(),inventory:getInventory(),expenses:getExpenses(),settings:getSettings(),lensPrices:getLensPrices()},b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='hakim_optics_backup_'+todayISO()+'.json';a.click()}
 async function importBackup(input){if(!requireAdmin()){input.value='';return;}const file=input.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!d||!Array.isArray(d.patients)||!Array.isArray(d.exams)||!Array.isArray(d.sales)||!Array.isArray(d.inventory))throw new Error('نسخة غير صالحة');if(!confirm('استعادة النسخة ستستبدل البيانات الحالية. هل تريد المتابعة؟')){input.value='';return}put(K.patients,d.patients);put(K.exams,d.exams);put(K.sales,d.sales);put(K.inventory,d.inventory);put(K.expenses,d.expenses||[]);if(d.settings){const old=getSettings();put(K.settings,{...old,...d.settings})}if(Array.isArray(d.lensPrices))put(K.lensPrices,d.lensPrices);alert('تمت استعادة النسخة الاحتياطية بنجاح. سيتم تحديث النظام.');location.reload()}catch(e){alert('تعذر استعادة النسخة: '+e.message)}finally{input.value=''}}
 
@@ -1749,6 +1762,8 @@ async function sellerDisableLicense(){
   if(!sellerAuthorized){alert('غير مصرح لك بإدارة الاشتراكات.');return}
   const center=(document.getElementById('sellerCenterId')?.value||'').trim().toUpperCase();
   if(!center){alert('أدخل معرّف مركز العميل.');return}
+  const ownCenter=(getCloudConfig().center||localStorage.getItem('hakim_cloud_center')||'').trim().toUpperCase();
+  if(ownCenter && center===ownCenter){alert('لا يمكن تعطيل اشتراك حساب البائع/المركز الحالي من لوحة البائع.');return}
   if(!confirm('سيتم تعطيل اشتراك المركز '+center+' فوراً بدون حذف تسجيله أو بياناته. هل تريد المتابعة؟'))return;
   try{
     const {data,error}=await cloudClient.rpc('hakim_seller_disable_license',{p_center_id:center});
