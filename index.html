@@ -547,6 +547,11 @@ async function submitLocalLogin(){
       if(err)err.textContent='لا يوجد اشتراك فعال على هذا الجهاز. يجب تفعيله والتحقق منه بالإنترنت أولاً.';
       return;
     }
+    if(usableLicense && licenseIsActive(usableLicense)){
+      localStorage.setItem('hakim_license_cache',JSON.stringify(usableLicense));
+      localStorage.setItem('hakim_offline_activated','1');
+      localStorage.setItem('hakim_offline_license_expiry',usableLicense.expires_at||'');
+    }
     if(kind==='admin'){
       const adminUser=(localStorage.getItem('hakim_admin_username')||'').trim();
       if(!adminUser||h!==localStorage.getItem('hakim_local_password_hash')){if(err)err.textContent='كلمة مرور Admin غير صحيحة';return}
@@ -929,8 +934,8 @@ function printInvoice(id){
       <button type="button" id="closeBtn" onclick="if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else{window.close();}">إغلاق</button>
     </div>
     <div class="page">
-      ${copy('نسخة المريض — بيانات المريض والوصفة',false)}
-      ${copy('نسخة المركز — بيانات المريض والوصفة والمبيعات',true)}
+      ${copy('',false)}
+      ${copy('',true)}
     </div>
   
 
@@ -1296,7 +1301,14 @@ let cloudClient=null, cloudChannel=null;
 function isDeviceActivated(){
   try{
     const a=JSON.parse(localStorage.getItem('hakim_google_activation')||'null');
-    return !!(a && a.user_id);
+    if(a && a.user_id) return true;
+    const cached=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
+    if(cached && licenseIsActive(cached) && localStorage.getItem('hakim_accounts_initialized')==='1'){
+      return true;
+    }
+    const off=localStorage.getItem('hakim_offline_activated')==='1';
+    const exp=localStorage.getItem('hakim_offline_license_expiry')||'';
+    return off && (!exp || new Date(exp).getTime()>Date.now());
   }catch(e){return false}
 }
 function setDeviceActivated(session){
