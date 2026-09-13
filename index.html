@@ -540,8 +540,7 @@ async function submitLocalLogin(){
     const sellerBypass=!!sellerAuthorized;
     const cachedLicense=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
     const offlineExpiry=localStorage.getItem('hakim_offline_license_expiry')||'';
-    const offlineAuthorized=localStorage.getItem('hakim_offline_activated')==='1' &&
-      (!offlineExpiry || new Date(offlineExpiry).getTime()>Date.now());
+    const offlineAuthorized=hasOfflineAuthorization();
     const usableLicense=currentLicense&&licenseIsActive(currentLicense)?currentLicense:(cachedLicense&&licenseIsActive(cachedLicense)?cachedLicense:null);
     if(!sellerBypass && !usableLicense && !offlineAuthorized){
       if(err)err.textContent='لا يوجد اشتراك فعال على هذا الجهاز. يجب تفعيله والتحقق منه بالإنترنت أولاً.';
@@ -1302,13 +1301,8 @@ function isDeviceActivated(){
   try{
     const a=JSON.parse(localStorage.getItem('hakim_google_activation')||'null');
     if(a && a.user_id) return true;
-    const cached=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
-    if(cached && licenseIsActive(cached) && localStorage.getItem('hakim_accounts_initialized')==='1'){
-      return true;
-    }
-    const off=localStorage.getItem('hakim_offline_activated')==='1';
-    const exp=localStorage.getItem('hakim_offline_license_expiry')||'';
-    return off && (!exp || new Date(exp).getTime()>Date.now());
+    if(hasOfflineAuthorization() && localStorage.getItem('hakim_accounts_initialized')==='1') return true;
+    return false;
   }catch(e){return false}
 }
 function setDeviceActivated(session){
@@ -1707,6 +1701,34 @@ async function getExistingLicense(){
   return {license:data||null,error:error||null};
 }
 function licenseIsActive(l){return !!(l&&l.active!==false&&(!l.expires_at||new Date(l.expires_at).getTime()>Date.now()))}
+function persistOfflineLicense(l){
+  try{
+    if(!l || l.active===false) return false;
+    const exp=l.expires_at ? String(l.expires_at) : '';
+    if(exp && !(new Date(exp).getTime()>Date.now())) return false;
+    localStorage.setItem('hakim_license_cache',JSON.stringify(l));
+    localStorage.setItem('hakim_offline_activated','1');
+    localStorage.setItem('hakim_offline_license_expiry',exp);
+    localStorage.setItem('hakim_offline_pass_v57',JSON.stringify({
+      center_id: localStorage.getItem('hakim_cloud_center')||'',
+      expires_at: exp,
+      activated_at: new Date().toISOString()
+    }));
+    return true;
+  }catch(e){ console.warn('persistOfflineLicense',e); return false; }
+}
+function hasOfflineAuthorization(){
+  try{
+    const pass=JSON.parse(localStorage.getItem('hakim_offline_pass_v57')||'null');
+    if(pass && (!pass.expires_at || new Date(pass.expires_at).getTime()>Date.now())) return true;
+    const cached=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
+    if(cached && licenseIsActive(cached)){ persistOfflineLicense(cached); return true; }
+    const off=localStorage.getItem('hakim_offline_activated')==='1';
+    const exp=localStorage.getItem('hakim_offline_license_expiry')||'';
+    return off && (!exp || new Date(exp).getTime()>Date.now());
+  }catch(e){return false}
+}
+
 async function routeAfterGoogleAuth(){
   await loadSubscriptionContact();
   if(sellerAuthorized){
@@ -1717,7 +1739,7 @@ async function routeAfterGoogleAuth(){
   }
   const r=await getExistingLicense();
   if(r.error){showSubscriptionScreen('تعذر التحقق من الاشتراك. اتصل بالإنترنت وحاول مرة أخرى.');return false}
-  if(r.license){currentLicense=r.license;renderLicenseUI(r.license);if(licenseIsActive(r.license)){hideLicenseGate();if(localStorage.getItem('hakim_accounts_initialized')==='1'&&localStorage.getItem('hakim_admin_username'))showLocalLogin();else showGooglePasswordSetup();return true}}
+  if(r.license){currentLicense=r.license;renderLicenseUI(r.license);if(licenseIsActive(r.license)){persistOfflineLicense(r.license);hideLicenseGate();if(localStorage.getItem('hakim_accounts_initialized')==='1'&&localStorage.getItem('hakim_admin_username'))showLocalLogin();else showGooglePasswordSetup();return true}}
   showSubscriptionScreen();return false;
 }
 async function startTrialAndContinue(){
@@ -1730,7 +1752,7 @@ async function startTrialAndContinue(){
     const {data,error}=trialRpc||{};
     if(error){await showSubscriptionScreen('فشل تفعيل التجريبي: '+error.message,{skipCenterLookup:true});return}
     const l=Array.isArray(data)?data[0]:data;
-    currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}
+    currentLicense=l;renderLicenseUI(l);persistOfflineLicense(l);
     if(!licenseIsActive(l)){await showSubscriptionScreen('تعذر إنشاء الاشتراك التجريبي. تأكد من إعداد دالة الاشتراك التجريبي في Supabase.',{skipCenterLookup:true});return}
     hideLicenseGate();
     if(localStorage.getItem('hakim_accounts_initialized')==='1'&&localStorage.getItem('hakim_admin_username'))showLocalLogin();
@@ -1749,7 +1771,7 @@ async function checkLicenseAndContinue(){
   if(!cloudClient&&!await cloudInit()){showSubscriptionScreen('تعذر الاتصال بالسحابة.');return}
   if(!await verifyGoogleIdentity())return;
   const r=await getExistingLicense();if(r.error){showSubscriptionScreen('تعذر التحقق من الاشتراك.');return}
-  if(r.license&&licenseIsActive(r.license)){currentLicense=r.license;renderLicenseUI(r.license);localStorage.setItem('hakim_license_cache',JSON.stringify(r.license));if(localStorage.getItem('hakim_accounts_initialized')==='1')showLocalLogin();else showGooglePasswordSetup();return}
+  if(r.license&&licenseIsActive(r.license)){currentLicense=r.license;renderLicenseUI(r.license);persistOfflineLicense(r.license);if(localStorage.getItem('hakim_accounts_initialized')==='1')showLocalLogin();else showGooglePasswordSetup();return}
   showSubscriptionScreen(r.license?.active===false?'الاشتراك موقوف.':'لا يوجد اشتراك فعال.');
 }
 async function requestYearlySubscription(){
@@ -1894,12 +1916,12 @@ async function checkLicense(){
     if(r.error){showLicenseGate('تعذر التحقق من اشتراك المركز. اتصل بالإنترنت وحاول مرة أخرى.');return false}
     const l=r.license;
     if(!l){showSubscriptionScreen();return false}
-    currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}
+    currentLicense=l;renderLicenseUI(l);persistOfflineLicense(l);
     if(!licenseIsActive(l)){showLicenseGate(l.active===false?'تم إيقاف اشتراك هذا المركز. يرجى التجديد.':'انتهى اشتراك هذا المركز. يرجى التجديد.');return false}
     hideLicenseGate();return true;
   }
   const cached=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
-  if(cached&&licenseIsActive(cached)){currentLicense=cached;renderLicenseUI(cached);localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',cached.expires_at||'');hideLicenseGate();return true}
+  if(cached&&licenseIsActive(cached)){currentLicense=cached;renderLicenseUI(cached);persistOfflineLicense(cached);hideLicenseGate();return true}
   showLicenseGate('يجب الاتصال بالإنترنت للتحقق من اشتراك المركز.');return false;
 }
 
@@ -2117,7 +2139,7 @@ function importOfflineSync(input){
   async function warmOfflineShell(){
     try{
       if(!('caches' in window) || !navigator.onLine)return;
-      const cache=await caches.open('hakim-optics-offline-v54');
+      const cache=await caches.open('hakim-optics-offline-v57');
       const urls=[
         './',
         './index.html',
@@ -2135,7 +2157,7 @@ function importOfflineSync(input){
   }
   function registerPWA(){
     if(!('serviceWorker' in navigator))return;
-    navigator.serviceWorker.register('./sw.js',{scope:'./'})
+    navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(reg=>{ if(reg.waiting) reg.waiting.postMessage('SKIP_WAITING'); reg.addEventListener('updatefound',()=>{const nw=reg.installing; if(nw) nw.addEventListener('statechange',()=>{if(nw.state==='installed' && navigator.serviceWorker.controller) nw.postMessage('SKIP_WAITING')})})})
       .then(()=>warmOfflineShell())
       .catch(e=>console.warn('PWA registration',e));
   }

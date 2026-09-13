@@ -1,4 +1,4 @@
-const CACHE='hakim-optics-offline-v55';
+const CACHE='hakim-optics-offline-v57';
 const SHELL=[
   './',
   './index.html',
@@ -18,6 +18,8 @@ self.addEventListener('install', event=>{
     }).then(()=>self.skipWaiting())
   );
 });
+
+self.addEventListener('message', event=>{ if(event.data==='SKIP_WAITING') self.skipWaiting(); });
 
 self.addEventListener('activate', event=>{
   event.waitUntil(
