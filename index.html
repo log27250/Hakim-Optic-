@@ -504,7 +504,7 @@ async function completePasswordRecovery(){
     const saved=(localStorage.getItem(ADMIN_EMAIL_KEY)||'').trim();
     if(saved && email && saved.toLowerCase()!==email.toLowerCase()){if(e)e.textContent='البريد لا يطابق المركز الموجود على هذا الجهاز.';return}
     localStorage.setItem('hakim_local_password_hash',await hashLocalPassword(p));
-    localStorage.setItem('hakim_accounts_initialized','1');
+    localStorage.setItem('hakim_accounts_initialized','1');if(currentLicense&&licenseIsActive(currentLicense)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',currentLicense.expires_at||'');}
     clearPasswordRecoveryUrl();
     try{await cloudClient.auth.signOut()}catch(_){}
     alert('تم تغيير كلمة مرور Admin بنجاح. استخدم كلمة المرور الجديدة للدخول.');
@@ -539,9 +539,12 @@ async function submitLocalLogin(){
     if(isOnline() && !sellerAuthorized){try{if(!cloudClient)await cloudInit();await checkSellerAuthorization()}catch(e){}}
     const sellerBypass=!!sellerAuthorized;
     const cachedLicense=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
+    const offlineExpiry=localStorage.getItem('hakim_offline_license_expiry')||'';
+    const offlineAuthorized=localStorage.getItem('hakim_offline_activated')==='1' &&
+      (!offlineExpiry || new Date(offlineExpiry).getTime()>Date.now());
     const usableLicense=currentLicense&&licenseIsActive(currentLicense)?currentLicense:(cachedLicense&&licenseIsActive(cachedLicense)?cachedLicense:null);
-    if(!sellerBypass && !usableLicense){
-      if(err)err.textContent='لا يوجد اشتراك فعال على هذا الجهاز. اربطه بحساب Google وتحقق من الاشتراك أولاً.';
+    if(!sellerBypass && !usableLicense && !offlineAuthorized){
+      if(err)err.textContent='لا يوجد اشتراك فعال على هذا الجهاز. يجب تفعيله والتحقق منه بالإنترنت أولاً.';
       return;
     }
     if(kind==='admin'){
@@ -844,15 +847,18 @@ function printInvoice(id){
     <p><b>Add:</b> ${e.add||'—'} &nbsp;&nbsp; <b>PD:</b> ${e.pd||'—'}</p>
   `;
 
-  const settings=getSettings();
-  const centerName=settings.centerName||center||'مركز الحكيم للبصريات';
-  const centerAddress=(settings.address||'').trim();
-  const centerPhone=(settings.phone||'').trim();
-  const centerNote=(settings.invoiceCenterNote||'تنبيه: هذه الفاتورة نسخة المركز').trim();
+  const settings=getSettings()||{};
+  const esc=(v)=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const centerName=String(settings.centerName||'مركز الحكيم للبصريات').trim();
+  const centerAddress=String(settings.address||'').trim();
+  const centerPhone=String(settings.phone||'').trim();
+  const centerNote=String(settings.invoiceCenterNote||'').trim();
   const centerHeader = `
-    <h2>${centerName}</h2>
-    ${centerAddress?`<p><b>العنوان:</b> ${centerAddress}</p>`:''}
-    ${centerPhone?`<p><b>الهاتف:</b> ${centerPhone}</p>`:''}
+    <div class="center-brand">
+      <h2>${esc(centerName)}</h2>
+      ${centerAddress?`<p><b>العنوان:</b> ${esc(centerAddress)}</p>`:''}
+      ${centerPhone?`<p><b>الهاتف:</b> ${esc(centerPhone)}</p>`:''}
+    </div>
   `;
 
   const patient = `
@@ -901,7 +907,7 @@ function printInvoice(id){
     h2{text-align:center;margin:0 0 5px;font-size:18px}
     h4{margin:8px 0 4px}
     .copy-label{text-align:center;font-weight:bold;font-size:11px;margin-bottom:5px}
-    .center-note{text-align:center;margin-top:8px;padding-top:5px;border-top:1px dashed #999;font-size:11px}
+    .center-brand{text-align:center;margin-bottom:4px}.center-note{text-align:center;margin-top:8px;padding-top:5px;border-top:1px dashed #999;font-size:11px}
     table{width:100%;border-collapse:collapse;margin:6px 0;font-size:11px}
     th,td{border:1px solid #999;padding:4px;text-align:center}
     p{margin:4px 0;font-size:11px}
@@ -1220,8 +1226,27 @@ function renderDailyReport(){
 
 function renderReports(){ensureStockLedger();let s=getSales(),e=getAllExams(),t=s.reduce((a,x)=>a+Number(x.total||0),0),p=s.reduce((a,x)=>a+Number(x.paid||0),0);reportPatients.textContent=patients.length;reportExams.textContent=e.length;reportSales.textContent=s.length;reportTotalSales.textContent=money(t);reportTotalPaid.textContent=money(p);reportTotalDue.textContent=money(s.reduce((a,x)=>a+Number(x.due||0),0));reportStockCost.textContent=money(inventoryClosingCost());if(document.getElementById('reportMonth')&&!document.getElementById('reportMonth').value)document.getElementById('reportMonth').value=todayISO().slice(0,7);if(document.getElementById('dailyReportDate')&&!document.getElementById('dailyReportDate').value)document.getElementById('dailyReportDate').value=todayISO();renderMonthlyAccounting();renderDailyReport();renderDoctorReport()}
 function updateDashboard(){let s=getSales(),e=getAllExams(),t=s.reduce((a,x)=>a+x.total,0),d=s.reduce((a,x)=>a+x.due,0),n=document.querySelectorAll('#dashboard .card .num');if(n[0])n[0].textContent=patients.length;if(n[1])n[1].textContent=e.length;if(n[2])n[2].textContent=money(t);if(n[3])n[3].textContent=money(d)}
-function saveSettings(){if(!requireAdmin())return;let email=(setEmail?.value||'').trim();if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('أدخل بريداً إلكترونياً صحيحاً');let old=getSettings();put(K.settings,{...old,centerName:setCenterName.value,phone:setPhone.value,address:setAddress.value,manager:setManager.value,currency:setCurrency.value,invoicePrefix:setInvoicePrefix.value,email,invoiceCenterNote:(document.getElementById('setInvoiceCenterNote')?.value||'').trim()});alert('تم حفظ إعدادات المركز')}
-function loadSettings(){let x=getSettings();setCenterName.value=x.centerName||'مركز الحكيم للبصريات';setPhone.value=x.phone||'';setAddress.value=x.address||'';setManager.value=x.manager||'';setCurrency.value=x.currency||'جنيه سوداني';setInvoicePrefix.value=x.invoicePrefix||'HK-INV-';if(setEmail)setEmail.value=x.email||'';if(document.getElementById('setInvoiceCenterNote'))document.getElementById('setInvoiceCenterNote').value=x.invoiceCenterNote||'تنبيه: هذه الفاتورة نسخة المركز';if(setUser)setUser.value=x.user||'Alhakim'}
+function saveSettings(){
+  if(!requireAdmin())return;
+  let email=(setEmail?.value||'').trim();
+  if(email&&!/^\S+@\S+\.\S+$/.test(email))return alert('أدخل بريداً إلكترونياً صحيحاً');
+  let old=getSettings()||{};
+  put(K.settings,{
+    ...old,
+    centerName:(setCenterName?.value||'').trim(),
+    phone:(setPhone?.value||'').trim(),
+    address:(setAddress?.value||'').trim(),
+    manager:(setManager?.value||'').trim(),
+    currency:(setCurrency?.value||'').trim(),
+    invoicePrefix:(setInvoicePrefix?.value||'').trim(),
+    email,
+    invoiceCenterNote:(document.getElementById('setInvoiceCenterNote')?.value||'').trim()
+  });
+  loadSettings();
+  try{applyCenterBranding?.()}catch(e){}
+  alert('تم حفظ إعدادات المركز. ستظهر في الفاتورة عند طباعتها.');
+}
+function loadSettings(){let x=getSettings();setCenterName.value=x.centerName||'مركز الحكيم للبصريات';setPhone.value=x.phone||'';setAddress.value=x.address||'';setManager.value=x.manager||'';setCurrency.value=x.currency||'جنيه سوداني';setInvoicePrefix.value=x.invoicePrefix||'HK-INV-';if(setEmail)setEmail.value=x.email||'';if(document.getElementById('setInvoiceCenterNote'))document.getElementById('setInvoiceCenterNote').value=x.invoiceCenterNote||'';if(setUser)setUser.value=x.user||'Alhakim'}
 function exportBackup(){if(!requireAdmin())return;let d={version:'v8',date:new Date().toISOString(),patients,exams:getAllExams(),sales:getSales(),inventory:getInventory(),expenses:getExpenses(),settings:getSettings(),lensPrices:getLensPrices()},b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='hakim_optics_backup_'+todayISO()+'.json';a.click()}
 async function importBackup(input){if(!requireAdmin()){input.value='';return;}const file=input.files?.[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!d||!Array.isArray(d.patients)||!Array.isArray(d.exams)||!Array.isArray(d.sales)||!Array.isArray(d.inventory))throw new Error('نسخة غير صالحة');if(!confirm('استعادة النسخة ستستبدل البيانات الحالية. هل تريد المتابعة؟')){input.value='';return}put(K.patients,d.patients);put(K.exams,d.exams);put(K.sales,d.sales);put(K.inventory,d.inventory);put(K.expenses,d.expenses||[]);if(d.settings){const old=getSettings();put(K.settings,{...old,...d.settings})}if(Array.isArray(d.lensPrices))put(K.lensPrices,d.lensPrices);alert('تمت استعادة النسخة الاحتياطية بنجاح. سيتم تحديث النظام.');location.reload()}catch(e){alert('تعذر استعادة النسخة: '+e.message)}finally{input.value=''}}
 
@@ -1673,7 +1698,7 @@ async function startTrialAndContinue(){
     const {data,error}=trialRpc||{};
     if(error){await showSubscriptionScreen('فشل تفعيل التجريبي: '+error.message,{skipCenterLookup:true});return}
     const l=Array.isArray(data)?data[0]:data;
-    currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));
+    currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}
     if(!licenseIsActive(l)){await showSubscriptionScreen('تعذر إنشاء الاشتراك التجريبي. تأكد من إعداد دالة الاشتراك التجريبي في Supabase.',{skipCenterLookup:true});return}
     hideLicenseGate();
     if(localStorage.getItem('hakim_accounts_initialized')==='1'&&localStorage.getItem('hakim_admin_username'))showLocalLogin();
@@ -1837,12 +1862,12 @@ async function checkLicense(){
     if(r.error){showLicenseGate('تعذر التحقق من اشتراك المركز. اتصل بالإنترنت وحاول مرة أخرى.');return false}
     const l=r.license;
     if(!l){showSubscriptionScreen();return false}
-    currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));
+    currentLicense=l;renderLicenseUI(l);localStorage.setItem('hakim_license_cache',JSON.stringify(l));if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}if(licenseIsActive(l)){localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',l.expires_at||'');}
     if(!licenseIsActive(l)){showLicenseGate(l.active===false?'تم إيقاف اشتراك هذا المركز. يرجى التجديد.':'انتهى اشتراك هذا المركز. يرجى التجديد.');return false}
     hideLicenseGate();return true;
   }
   const cached=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
-  if(cached&&licenseIsActive(cached)){currentLicense=cached;renderLicenseUI(cached);hideLicenseGate();return true}
+  if(cached&&licenseIsActive(cached)){currentLicense=cached;renderLicenseUI(cached);localStorage.setItem('hakim_offline_activated','1');localStorage.setItem('hakim_offline_license_expiry',cached.expires_at||'');hideLicenseGate();return true}
   showLicenseGate('يجب الاتصال بالإنترنت للتحقق من اشتراك المركز.');return false;
 }
 
