@@ -1,10 +1,12 @@
 {
-  "name":"Hakim Optics",
-  "short_name":"Hakim Optics",
-  "start_url":"./index.html",
+  "name":"Hakim Optics Center",
+  "short_name":"Hakim Optic",
+  "start_url":"./",
   "display":"standalone",
   "background_color":"#ffffff",
-  "theme_color":"#0f766e",
+  "theme_color":"#0f172a",
+  "lang":"ar",
+  "dir":"rtl",
   "icons":[
     {"src":"./icon-192.png","sizes":"192x192","type":"image/png"},
     {"src":"./icon-512.png","sizes":"512x512","type":"image/png"}

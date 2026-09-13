@@ -265,7 +265,7 @@ textarea{font-family:inherit;resize:vertical}.invoice-center-header{text-align:c
 <div class="panel" style="margin-top:12px;border:1px solid #e5e7eb;box-shadow:none"><h3>أصناف المبيعات</h3><div class="form"><div class="full"><label>الصنف من المخزون</label><input id="saleItem" list="productList" oninput="autoProductPrice()"/><datalist id="productList"></datalist></div><div><label>الكمية</label><input id="saleQty" min="1" oninput="calcLine()" type="number" value="1"/></div><div><label>سعر البيع من المخزون</label><input id="salePrice" readonly="" type="number"/></div><div><label>الإجمالي</label><input id="lineTotal" readonly=""/></div><div><button class="btn" onclick="addSaleLine()">إضافة الصنف</button> <button class="btn secondary" onclick="clearSaleItem()" type="button">مسح</button></div></div><table><thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th><th></th></tr></thead><tbody id="invoiceLines"></tbody></table></div>
 <div class="form" style="margin-top:12px"><div><label>الخصم</label><input id="saleDiscount" min="0" oninput="recalcInvoice()" type="number" value="0"/></div><div><label>الإجمالي</label><input id="invoiceTotal" readonly=""/></div><div><label>المدفوع</label><input id="salePaidInput" min="0" type="number" value="0"/></div><div><label>طريقة الدفع</label><select id="paymentMethod" onchange="toggleBankFields()"><option value="cash">نقد</option><option value="bank">بنكك</option></select></div><div class="hidden" id="bankFields"><label>رقم الإشعار</label><input id="bankNotice"/></div><div class="full"><label>ملاحظة</label><input id="paymentNote"/></div></div></div>
 <div class="panel" style="margin-top:15px;overflow:auto"><div class="search"><input id="salesSearch" oninput="renderSales()" placeholder="ابحث برقم الفاتورة أو المريض"/></div><table style="min-width:900px"><thead><tr><th>الفاتورة</th><th>التاريخ</th><th>المريض</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>الدفع</th><th>إجراء</th></tr></thead><tbody id="salesRows"></tbody></table></div></section>
-<section class="hidden" id="inventory"><div class="top"><div class="title"><h1>المخزون</h1><p>الأسعار والكميات وقروبات العدسات القياسية — كشف النظر ليس صنفاً في المخزون</p></div><button id="inventoryAddBtn" type="button" class="btn admin-only" onclick="newInventoryItem();return false">+ إضافة صنف</button></div><div class="cards"><div class="card"><div class="label">عدد الأصناف</div><div class="num" id="inventoryCount">0</div></div><div class="card"><div class="label">إجمالي الكميات</div><div class="num" id="inventoryQty">0</div></div><div class="card"><div class="label">منخفض المخزون</div><div class="num" id="inventoryLow">0</div></div><div class="card"><div class="label">قيمة المخزون</div><div class="num" id="inventoryValue">0</div></div></div>
+<section class="hidden" id="inventory"><div class="top"><div class="title"><h1>المخزون</h1><p>الأسعار والكميات وقروبات العدسات القياسية — كشف النظر يظهر كخدمة ثابتة بدون كمية</p></div><button id="inventoryAddBtn" type="button" class="btn admin-only" onclick="newInventoryItem();return false">+ إضافة صنف</button></div><div class="cards"><div class="card"><div class="label">عدد الأصناف</div><div class="num" id="inventoryCount">0</div></div><div class="card"><div class="label">إجمالي الكميات</div><div class="num" id="inventoryQty">0</div></div><div class="card"><div class="label">منخفض المخزون</div><div class="num" id="inventoryLow">0</div></div><div class="card"><div class="label">قيمة المخزون</div><div class="num" id="inventoryValue">0</div></div></div>
 <div class="panel" style="margin-top:15px"><div class="top"><div><h3>أسعار قروبات العدسات</h3><p style="color:#64748b;font-size:12px">حدد سعر كل قروب هنا. هذه الأسعار هي التي تظهر تلقائياً عند اختيار القروب في الفاتورة.</p></div><button class="btn admin-only" onclick="saveLensPrices()">حفظ أسعار القروبات</button></div><div id="globalLensPriceList"></div></div>
 <div class="panel hidden" id="inventoryForm" style="margin-top:15px"><h3>إضافة / تعديل صنف</h3><input id="invId" type="hidden"/><div class="form"><div><label>اسم الصنف</label><input id="invName"/></div><div><label>الفئة</label><select id="invCategory"><option>فريمات</option><option>عدسات</option><option>عدسات لاصقة</option><option>إكسسوارات</option><option>أخرى</option><option>فحص نظر</option></select></div><div><label>الكود</label><input id="invCode"/></div><div><label>الكمية</label><input id="invQty" min="0" type="number"/><small id="fixedExamHint" style="display:block;color:#64748b">فحص النظر صنف ثابت بدون كمية.</small></div><div><label>حد التنبيه</label><input id="invMin" min="0" type="number" value="2"/></div><div><label>سعر الشراء</label><input id="invCost" min="0" type="number"/></div><div><label>سعر البيع</label><input id="invSell" min="0" type="number"/></div><div><label>المورد</label><input id="invSupplier"/></div><div><label>طريقة دفع الشراء</label><select id="invStockMethod"><option value="cash">نقد</option><option value="bank">بنكك</option></select></div><div><label>رقم إشعار الشراء البنكي</label><input id="invStockBankNotice"/></div><div class="full"><label><input id="invIsLens" onchange="toggleLensGroups()" type="checkbox"/> صنف عدسات</label></div></div><div class="hidden" id="lensGroups">
 <h3>قروبات العدسات القياسية</h3>
@@ -716,6 +716,7 @@ function populateSalePatients(){
   list.innerHTML=patients.map(p=>`<option value="${p.id}">${p.name}</option><option value="${p.name}">${p.id}</option>`).join('');
 }
 function buildProductDatalist(){
+  ensureFixedExamInventory();
   const opts=[];
   getInventory().forEach(x=>{
     opts.push(`<option value="${x.name}"></option>`);
@@ -853,16 +854,14 @@ function printInvoice(id){
   const centerAddress=String(settings.address||'').trim();
   const centerPhone=String(settings.phone||'').trim();
   const centerNote=String(settings.invoiceCenterNote||'').trim();
-  const centerHeader = `
-    <div class="center-brand">
-      <h2>${esc(centerName)}</h2>
-      ${centerAddress?`<p><b>العنوان:</b> ${esc(centerAddress)}</p>`:''}
-      ${centerPhone?`<p><b>الهاتف:</b> ${esc(centerPhone)}</p>`:''}
+  const centerFooter = `
+    <div class="center-footer">
+      ${centerAddress?`<div>العنوان: ${esc(centerAddress)}</div>`:''}
+      ${centerPhone?`<div>الهاتف: ${esc(centerPhone)}</div>`:''}
     </div>
   `;
 
   const patient = `
-    ${centerHeader}
     <p><b>رقم الفاتورة:</b> ${s.id} &nbsp; | &nbsp; <b>التاريخ:</b> ${s.date}</p>
     <p><b>المريض:</b> ${s.patientName||'—'} &nbsp; | &nbsp; <b>الهاتف:</b> ${s.phone||'—'}</p>
     <p><b>الطبيب الفاحص:</b> ${e.doctorName||'—'}</p>
@@ -887,11 +886,13 @@ function printInvoice(id){
 
   function copy(label, includeSales){
     return `<section class="invoice-copy">
+      <h2>${esc(centerName)}</h2>
       <div class="copy-label">${label}</div>
       ${patient}
       ${prescription}
       ${includeSales?sales:''}
       ${includeSales && centerNote ? `<p class="center-note"><b>${centerNote}</b></p>` : ''}
+      ${centerFooter}
     </section>`;
   }
 
@@ -907,7 +908,7 @@ function printInvoice(id){
     h2{text-align:center;margin:0 0 5px;font-size:18px}
     h4{margin:8px 0 4px}
     .copy-label{text-align:center;font-weight:bold;font-size:11px;margin-bottom:5px}
-    .center-brand{text-align:center;margin-bottom:4px}.center-note{text-align:center;margin-top:8px;padding-top:5px;border-top:1px dashed #999;font-size:11px}
+    .center-footer{text-align:center;margin-top:12px;padding-top:7px;border-top:1px dashed #999;font-size:11px;line-height:1.7}.center-note{text-align:center;margin-top:8px;padding-top:5px;border-top:1px dashed #999;font-size:11px}
     table{width:100%;border-collapse:collapse;margin:6px 0;font-size:11px}
     th,td{border:1px solid #999;padding:4px;text-align:center}
     p{margin:4px 0;font-size:11px}
@@ -1114,7 +1115,26 @@ if(!fixedQty){
 }
 inventoryForm.classList.add('hidden');renderInventory();renderReports()}
 function editInventoryItem(id){if(!requireAdmin())return;let x=getInventory().find(x=>x.id===id);if(!x)return;inventoryForm.classList.remove('hidden');invId.value=x.id;invName.value=x.name;invCategory.value=x.category;invCode.value=x.code||'';invQty.value=x.qty;invMin.value=x.min;invCost.value=x.cost;invSell.value=x.sell;invSupplier.value=x.supplier||'';if(document.getElementById('invStockMethod'))document.getElementById('invStockMethod').value='cash';if(document.getElementById('invStockBankNotice'))document.getElementById('invStockBankNotice').value='';invIsLens.checked=!!x.isLens;toggleLensGroups();lensGroupList.innerHTML='';(x.lensGroups||[]).forEach(addLensGroup);updateInventoryFormMode()}
-function renderInventory(){renderGlobalLensPrices();let a=getInventory(),q=(inventorySearch.value||'').toLowerCase();inventoryRows.innerHTML=a.filter(x=>(x.name+' '+x.code+' '+x.category).toLowerCase().includes(q)).map(x=>`<tr><td>${x.code||x.id}</td><td>${x.name}</td><td>${x.category}</td><td>${(x.category==='فحص نظر'||x.isLens)?'ثابت':x.qty}</td><td>${money(x.cost)}</td><td>${money(x.sell)}</td><td>${x.isLens?(x.lensGroups||[]).map(g=>`${g.name} — ${money(g.price||0)}`).join('، '):'—'}</td><td>${(x.category==='فحص نظر'||x.isLens)?'ثابت':(x.qty<=x.min?'منخفض':'متوفر')}</td><td>${isAdmin()?`<button class="btn" onclick="editInventoryItem('${x.id}')">تعديل</button>`:'<span style="color:#64748b">عرض فقط</span>'}</td></tr>`).join('');inventoryCount.textContent=a.length;inventoryQty.textContent=money(a.reduce((n,x)=>n+x.qty,0));inventoryLow.textContent=a.filter(x=>x.qty<=x.min).length;inventoryValue.textContent=money(a.reduce((n,x)=>n+x.qty*x.cost,0))}
+function ensureFixedExamInventory(){
+  let a=getInventory();
+  let idx=a.findIndex(x=>String(x.id||'')==='EXAM-FIXED');
+  if(idx<0) idx=a.findIndex(x=>String(x.category||'')==='فحص نظر' || String(x.name||'').trim()==='كشف النظر');
+  if(idx<0){
+    a.push({id:'EXAM-FIXED',name:'كشف النظر',category:'فحص نظر',code:'EXAM',qty:0,min:0,cost:0,sell:0,supplier:'',isLens:false,lensGroups:[]});
+    put(K.inventory,a);
+  }else{
+    const x=a[idx];
+    let changed=false;
+    if(x.id!=='EXAM-FIXED'){x.id='EXAM-FIXED';changed=true}
+    if(String(x.name||'').trim()!=='كشف النظر'){x.name='كشف النظر';changed=true}
+    if(String(x.category||'').trim()!=='فحص نظر'){x.category='فحص نظر';changed=true}
+    if(x.code!=='EXAM'){x.code='EXAM';changed=true}
+    if(x.qty!==0){x.qty=0;changed=true}
+    if(changed)put(K.inventory,a);
+  }
+  return a;
+}
+function renderInventory(){ensureFixedExamInventory();renderGlobalLensPrices();let a=getInventory(),q=(inventorySearch.value||'').toLowerCase();inventoryRows.innerHTML=a.filter(x=>(x.name+' '+x.code+' '+x.category).toLowerCase().includes(q)).map(x=>`<tr><td>${x.code||x.id}</td><td>${x.name}</td><td>${x.category}</td><td>${(x.category==='فحص نظر'||x.isLens)?'ثابت':x.qty}</td><td>${money(x.cost)}</td><td>${money(x.sell)}</td><td>${x.isLens?(x.lensGroups||[]).map(g=>`${g.name} — ${money(g.price||0)}`).join('، '):'—'}</td><td>${(x.category==='فحص نظر'||x.isLens)?'ثابت':(x.qty<=x.min?'منخفض':'متوفر')}</td><td>${isAdmin()?`<button class="btn" onclick="editInventoryItem('${x.id}')">تعديل</button>`:'<span style="color:#64748b">عرض فقط</span>'}</td></tr>`).join('');inventoryCount.textContent=a.length;inventoryQty.textContent=money(a.reduce((n,x)=>n+x.qty,0));inventoryLow.textContent=a.filter(x=>x.qty<=x.min).length;inventoryValue.textContent=money(a.reduce((n,x)=>n+x.qty*x.cost,0))}
 
 function getExpenses(){return get(K.expenses,[])}
 function toggleExpenseForm(){if(!requireAdmin())return;expenseForm.classList.toggle('hidden');if(!expenseForm.classList.contains('hidden')){expDate.value=todayISO();expAmount.value='';expName.value='';expBankNotice.value='';expNote.value='';expMethod.value='cash';toggleExpenseBank()}}
@@ -1190,7 +1210,7 @@ function dailyCashClosing(date){const dates=dailyDates();let cash=Number(get('ha
 function dailyCashPrevious(date){const prev=dailyDates().filter(d=>d<date).pop();return prev?dailyCashClosing(prev):Number(get('hakim_opening_cash',0)||0)}
 const LANG_KEY='hakim_language';
 const LANG={
-'مركز الحكيم للبصريات':'Al-Hakim Optics Center','لوحة إدارة المركز':'Center Management Dashboard','الرئيسية':'Home','المرضى':'Patients','فحص النظر':'Eye Examination','المبيعات':'Sales','المخزون':'Inventory','التقارير':'Reports','الإعدادات':'Settings','الإدارة':'Administration','المنصرفات':'Expenses','تسجيل الخروج':'Logout','إضافة مريض':'Add Patient','إجمالي المرضى':'Total Patients','فحوصات اليوم':'Today\'s Exams','مبيعات اليوم':'Today\'s Sales','مبالغ مستحقة':'Outstanding Amount','آخر المرضى':'Recent Patients','طلبات النظارات':'Eyewear Orders','الاسم':'Name','الهاتف':'Phone','آخر زيارة':'Last Visit','الطلب':'Order','المريض':'Patient','الحالة':'Status','جاهز':'Ready','قيد التصنيع':'In Production','إدارة ملفات مرضى مركز الحكيم':'Manage Al-Hakim patient files','إضافة مريض جديد':'Add New Patient','الاسم الكامل':'Full Name','رقم الهاتف':'Phone Number','عرض الملف':'View File','حذف':'Delete','هل أنت متأكد من حذف الفاتورة رقم ':'Are you sure you want to delete invoice number ', 'سيتم حذف الفاتورة نهائياً من النظام.':'The invoice will be permanently deleted from the system.', 'هذا الإجراء متاح للـAdmin فقط':'This action is available to Admin only','المخزون':'Inventory','الأسعار والكميات وقروبات العدسات القياسية — كشف النظر ليس صنفاً في المخزون':'Prices, quantities and standard lens groups — eye examination is not an inventory item','إضافة صنف':'Add Item','عدد الأصناف':'Number of Items','إجمالي الكميات':'Total Quantity','منخفض المخزون':'Low Stock','قيمة المخزون':'Inventory Value','أسعار قروبات العدسات':'Lens Group Prices','حفظ أسعار القروبات':'Save Group Prices','التقارير':'Reports','جرد وحسابات نهاية الشهر':'End-of-Month Inventory & Accounts','الشهر':'Month','التاريخ':'Date','إجمالي المبيعات':'Total Sales','المدفوع نقداً':'Paid Cash','المدفوع بنكك':'Paid Bankak','المتبقي':'Remaining','المنصرف نقداً':'Cash Expenses','المنصرف بنكك':'Bankak Expenses','إجمالي المنصرفات':'Total Expenses','الكاش السابق':'Previous Cash','كاش آخر اليوم':'Closing Cash','صافي الربح':'Net Profit','تقرير الطبيب الفاحص':'Examining Doctor Report','اسم الطبيب':'Doctor Name','المنصرفات':'Expenses','تسجيل ومتابعة جميع المصروفات اليومية للمركز':'Record and track all daily center expenses','نوع المنصرف':'Expense Type','البيان':'Description','المبلغ':'Amount','طريقة الدفع':'Payment Method','كاش':'Cash','بنكك':'Bankak','رقم الإشعار':'Reference Number','ملاحظة':'Note','حفظ المنصرف':'Save Expense','إلغاء':'Cancel','بحث في المنصرفات':'Search expenses','الدفع':'Payment','الإشعار':'Reference','الملاحظة':'Note','إجراء':'Action','هذه الصفحة للـAdmin فقط — إدارة المستخدمين والمخزون والإعدادات والنسخ الاحتياطية':'Admin only — manage users, inventory, settings and backups','الحساب الحالي':'Current Account','الوصفة':'Prescription','الطبيب الفاحص':'Examining Doctor','المبيعات':'Sales','الكمية':'Quantity','السعر':'Price','الإجمالي':'Total','المدفوع':'Paid','طريقة الدفع':'Payment Method','المتبقي':'Remaining','بنك':'Bankak','نقد':'Cash','فحص نظر':'Eye Examination','بحث':'Search','حفظ':'Save','تعديل':'Edit','إضافة':'Add','إغلاق':'Close','رجوع للنظام':'Back to System','طباعة':'Print','لا توجد بيانات':'No data available','غير محدد':'Not specified','تم الحفظ':'Saved','إنشاء حساب':'Create Account','اسم المستخدم':'Username','كلمة المرور':'Password','تأكيد كلمة المرور':'Confirm Password','الدخول':'Login','حساب Admin':'Admin Account','حساب User':'User Account','المستخدم':'User','المشرف':'Admin','الإدارة':'Administration','الإعدادات':'Settings','النسخ الاحتياطي':'Backup','استعادة نسخة احتياطية':'Restore Backup','تصدير نسخة احتياطية':'Export Backup','حفظ إعدادات المركز':'Save Center Settings','اسم المركز':'Center Name','العنوان':'Address','المدير':'Manager','العملة':'Currency','بادئة الفاتورة':'Invoice Prefix','البريد الإلكتروني':'Email','المريض':'Patient','فحص النظر':'Eye Examination','المبيعات':'Sales','إضافة فاتورة':'Add Invoice','رقم الفاتورة':'Invoice Number','الخصم':'Discount','الملاحظات':'Notes','حفظ الفاتورة':'Save Invoice','فاتورة نهائية':'Final Invoice','فاتورة مبدئية':'Draft Invoice','إضافة صنف للفاتورة':'Add item to invoice','الكمية غير كافية في المخزون':'Insufficient stock','تم حفظ المنصرف':'Expense saved','تم حفظ إعدادات المركز':'Center settings saved','تسجيل الدخول':'Login','تسجيل الدخول بحساب Google':'Sign in with Google','المزامنة السحابية':'Cloud Sync','حالة المزامنة':'Sync Status','متصل':'Connected','غير متصل':'Offline'
+'مركز الحكيم للبصريات':'Al-Hakim Optics Center','لوحة إدارة المركز':'Center Management Dashboard','الرئيسية':'Home','المرضى':'Patients','فحص النظر':'Eye Examination','المبيعات':'Sales','المخزون':'Inventory','التقارير':'Reports','الإعدادات':'Settings','الإدارة':'Administration','المنصرفات':'Expenses','تسجيل الخروج':'Logout','إضافة مريض':'Add Patient','إجمالي المرضى':'Total Patients','فحوصات اليوم':'Today\'s Exams','مبيعات اليوم':'Today\'s Sales','مبالغ مستحقة':'Outstanding Amount','آخر المرضى':'Recent Patients','طلبات النظارات':'Eyewear Orders','الاسم':'Name','الهاتف':'Phone','آخر زيارة':'Last Visit','الطلب':'Order','المريض':'Patient','الحالة':'Status','جاهز':'Ready','قيد التصنيع':'In Production','إدارة ملفات مرضى مركز الحكيم':'Manage Al-Hakim patient files','إضافة مريض جديد':'Add New Patient','الاسم الكامل':'Full Name','رقم الهاتف':'Phone Number','عرض الملف':'View File','حذف':'Delete','هل أنت متأكد من حذف الفاتورة رقم ':'Are you sure you want to delete invoice number ', 'سيتم حذف الفاتورة نهائياً من النظام.':'The invoice will be permanently deleted from the system.', 'هذا الإجراء متاح للـAdmin فقط':'This action is available to Admin only','المخزون':'Inventory','الأسعار والكميات وقروبات العدسات القياسية — كشف النظر يظهر كخدمة ثابتة بدون كمية':'Prices, quantities and standard lens groups — eye examination appears as a fixed service without quantity','إضافة صنف':'Add Item','عدد الأصناف':'Number of Items','إجمالي الكميات':'Total Quantity','منخفض المخزون':'Low Stock','قيمة المخزون':'Inventory Value','أسعار قروبات العدسات':'Lens Group Prices','حفظ أسعار القروبات':'Save Group Prices','التقارير':'Reports','جرد وحسابات نهاية الشهر':'End-of-Month Inventory & Accounts','الشهر':'Month','التاريخ':'Date','إجمالي المبيعات':'Total Sales','المدفوع نقداً':'Paid Cash','المدفوع بنكك':'Paid Bankak','المتبقي':'Remaining','المنصرف نقداً':'Cash Expenses','المنصرف بنكك':'Bankak Expenses','إجمالي المنصرفات':'Total Expenses','الكاش السابق':'Previous Cash','كاش آخر اليوم':'Closing Cash','صافي الربح':'Net Profit','تقرير الطبيب الفاحص':'Examining Doctor Report','اسم الطبيب':'Doctor Name','المنصرفات':'Expenses','تسجيل ومتابعة جميع المصروفات اليومية للمركز':'Record and track all daily center expenses','نوع المنصرف':'Expense Type','البيان':'Description','المبلغ':'Amount','طريقة الدفع':'Payment Method','كاش':'Cash','بنكك':'Bankak','رقم الإشعار':'Reference Number','ملاحظة':'Note','حفظ المنصرف':'Save Expense','إلغاء':'Cancel','بحث في المنصرفات':'Search expenses','الدفع':'Payment','الإشعار':'Reference','الملاحظة':'Note','إجراء':'Action','هذه الصفحة للـAdmin فقط — إدارة المستخدمين والمخزون والإعدادات والنسخ الاحتياطية':'Admin only — manage users, inventory, settings and backups','الحساب الحالي':'Current Account','الوصفة':'Prescription','الطبيب الفاحص':'Examining Doctor','المبيعات':'Sales','الكمية':'Quantity','السعر':'Price','الإجمالي':'Total','المدفوع':'Paid','طريقة الدفع':'Payment Method','المتبقي':'Remaining','بنك':'Bankak','نقد':'Cash','فحص نظر':'Eye Examination','بحث':'Search','حفظ':'Save','تعديل':'Edit','إضافة':'Add','إغلاق':'Close','رجوع للنظام':'Back to System','طباعة':'Print','لا توجد بيانات':'No data available','غير محدد':'Not specified','تم الحفظ':'Saved','إنشاء حساب':'Create Account','اسم المستخدم':'Username','كلمة المرور':'Password','تأكيد كلمة المرور':'Confirm Password','الدخول':'Login','حساب Admin':'Admin Account','حساب User':'User Account','المستخدم':'User','المشرف':'Admin','الإدارة':'Administration','الإعدادات':'Settings','النسخ الاحتياطي':'Backup','استعادة نسخة احتياطية':'Restore Backup','تصدير نسخة احتياطية':'Export Backup','حفظ إعدادات المركز':'Save Center Settings','اسم المركز':'Center Name','العنوان':'Address','المدير':'Manager','العملة':'Currency','بادئة الفاتورة':'Invoice Prefix','البريد الإلكتروني':'Email','المريض':'Patient','فحص النظر':'Eye Examination','المبيعات':'Sales','إضافة فاتورة':'Add Invoice','رقم الفاتورة':'Invoice Number','الخصم':'Discount','الملاحظات':'Notes','حفظ الفاتورة':'Save Invoice','فاتورة نهائية':'Final Invoice','فاتورة مبدئية':'Draft Invoice','إضافة صنف للفاتورة':'Add item to invoice','الكمية غير كافية في المخزون':'Insufficient stock','تم حفظ المنصرف':'Expense saved','تم حفظ إعدادات المركز':'Center settings saved','تسجيل الدخول':'Login','تسجيل الدخول بحساب Google':'Sign in with Google','المزامنة السحابية':'Cloud Sync','حالة المزامنة':'Sync Status','متصل':'Connected','غير متصل':'Offline'
 };
 const LANG_REV=Object.fromEntries(Object.entries(LANG).map(([a,e])=>[e,a]));
 function translateNode(node,dict){
@@ -2085,7 +2105,7 @@ function importOfflineSync(input){
   async function warmOfflineShell(){
     try{
       if(!('caches' in window) || !navigator.onLine)return;
-      const cache=await caches.open('hakim-optics-offline-v44');
+      const cache=await caches.open('hakim-optics-offline-v54');
       const urls=[
         './',
         './index.html',
