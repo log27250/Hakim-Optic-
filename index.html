@@ -783,28 +783,126 @@ function changeLineQty(i,v){let q=Number(v);if(!Number.isInteger(q)||q<1)return 
 function removeLine(i){invoiceLines.splice(i,1);renderInvoiceLines();recalcInvoice()}
 function recalcInvoice(){invoiceTotal.value=Math.max(0,invoiceLines.reduce((a,x)=>a+Number(x.total||0),0)-Number(saleDiscount.value||0))}
 function toggleBankFields(){bankFields.classList.toggle('hidden',paymentMethod.value!=='bank')}
-function saveInvoice(status){if(!invoiceLines.length)return alert('أضف صنفاً واحداً على الأقل للفاتورة');if(paymentMethod.value==='bank'&&!String(bankNotice.value||'').trim())return alert('يجب إدخال رقم الإشعار عند السداد بالبنك');let p=patients.find(x=>x.id===salePatient.value),e=getAllExams().find(x=>x.savedAt===invoicePrescription.value),total=Number(invoiceTotal.value||0),paid=Math.min(total,Math.max(0,Number(salePaidInput.value||0))),a=getSales(),old=editingInvoice?a.find(x=>x.id===editingInvoice):null,inv=getInventory();if(old&&old.status==='final'){(old.items||[]).forEach(l=>{let z=inv.find(x=>x.id===l.inventoryId);if(z)z.qty+=Number(l.qty||0)})}let s={id:editingInvoice||invoiceNo.value,date:saleDate.value||todayISO(),patientId:salePatient.value,patientName:p?.name||'',phone:p?.phone||'',exam:e||null,items:invoiceLines.map(x=>{const prod=inv.find(z=>z.id===x.inventoryId);return {...x,cost:Number(x.cost??prod?.cost??0)}}),discount:Number(saleDiscount.value||0),total,paid,due:total-paid,status,paymentMethod:paymentMethod.value,bankNotice:bankNotice.value,note:(paymentNote.value||'').trim(),payments:(()=>{let arr=Array.isArray(old?.payments)?old.payments.slice():Array.isArray(old?.settlements)?old.settlements.slice():[];let target=paid,have=arr.reduce((n,x)=>n+Number(x.amount||0),0);if(target<have){let rem=target;let out=[];for(let i=0;i<arr.length&&rem>0;i++){let q=Math.min(Number(arr[i].amount||0),rem);if(q>0)out.push({...arr[i],amount:q});rem-=q}arr=out}else if(target>have){let diff=target-have;if(diff>0)arr.push({date:saleDate.value||todayISO(),amount:diff,method:paymentMethod.value,bankNotice:bankNotice.value})}return arr})(),savedAt:old?.savedAt||new Date().toISOString()};if(status==='final'){
-  let needed={};
-  s.items.forEach(l=>{
-    let prod=inv.find(x=>x.id===l.inventoryId);
-    // العدسات والكشف أصناف ثابتة بدون كمية، لذلك لا تخصم من المخزون ولا تمنع البيع بأي كمية.
-    if(prod && prod.category!=='فحص نظر' && !prod.isLens) needed[l.inventoryId]=(needed[l.inventoryId]||0)+Number(l.qty||0);
-  });
-  for(let id in needed){
-    let z=inv.find(x=>x.id===id);
-    if(!z) continue;
-    if(Number(z.qty||0)<needed[id]){
-      if(old&&old.status==='final'){(old.items||[]).forEach(l=>{let oz=inv.find(x=>x.id===l.inventoryId);if(oz&&oz.category!=='فحص نظر'&&!oz.isLens)oz.qty-=Number(l.qty||0)})}
-      return alert('الكمية غير كافية في المخزون');
-    }
+function saveInvoice(status){
+  if(!invoiceLines.length)return alert('أضف صنفاً واحداً على الأقل للفاتورة');
+  if(status==='final'&&paymentMethod.value==='bank'&&Number(salePaidInput.value||0)>0&&!String(bankNotice.value||'').trim())return alert('يجب إدخال رقم الإشعار عند السداد بالبنك');
+  let p=patients.find(x=>x.id===salePatient.value),
+      e=getAllExams().find(x=>x.savedAt===invoicePrescription.value),
+      total=Number(invoiceTotal.value||0),
+      enteredPaid=Math.min(total,Math.max(0,Number(salePaidInput.value||0))),
+      paid=status==='final'?enteredPaid:0,
+      a=getSales(),
+      old=editingInvoice?a.find(x=>x.id===editingInvoice):null,
+      inv=getInventory();
+
+  if(status==='final'&&paid<=0)return alert('لا يمكن حفظ الفاتورة نهائية بدون دفع. أدخل مبلغاً كاملاً أو جزئياً ثم احفظ.');
+
+  // If an existing final invoice is edited, return its old stock first.
+  if(old&&old.status==='final'){
+    (old.items||[]).forEach(l=>{
+      let z=inv.find(x=>x.id===l.inventoryId);
+      if(z&&z.category!=='فحص نظر'&&!z.isLens)z.qty+=Number(l.qty||0);
+    });
   }
-  Object.keys(needed).forEach(id=>{let z=inv.find(x=>x.id===id);if(z)z.qty-=needed[id]});
-  put(K.inventory,inv)
+
+  let s={
+    id:editingInvoice||invoiceNo.value,
+    date:saleDate.value||todayISO(),
+    patientId:salePatient.value,
+    patientName:p?.name||'',
+    phone:p?.phone||'',
+    exam:e||null,
+    items:invoiceLines.map(x=>{
+      const prod=inv.find(z=>z.id===x.inventoryId);
+      return {...x,cost:Number(x.cost??prod?.cost??0)};
+    }),
+    discount:Number(saleDiscount.value||0),
+    total,
+    paid,
+    due:status==='final'?total-paid:0,
+    status,
+    paymentMethod:paymentMethod.value,
+    bankNotice:status==='final'?bankNotice.value:'',
+    note:(paymentNote.value||'').trim(),
+    payments:[],
+    savedAt:old?.savedAt||new Date().toISOString()
+  };
+
   if(status==='final'){
-    if(old&&old.status==='final'){(old.items||[]).forEach(l=>{let prod=inv.find(x=>x.id===l.inventoryId);if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)addStockMove('sale-reversal',l.inventoryId,Number(l.qty||0),Number(l.cost??prod.cost??0),todayISO(),s.id)})}
-    s.items.forEach(l=>{let prod=inv.find(x=>x.id===l.inventoryId);if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)addStockMove('sale',l.inventoryId,-Number(l.qty||0),Number(l.cost??prod.cost??0),s.date,s.id)})
+    let arr=Array.isArray(old?.payments)?old.payments.slice():Array.isArray(old?.settlements)?old.settlements.slice():[];
+    let target=paid,have=arr.reduce((n,x)=>n+Number(x.amount||0),0);
+    if(target<have){
+      let rem=target,out=[];
+      for(let i=0;i<arr.length&&rem>0;i++){
+        let q=Math.min(Number(arr[i].amount||0),rem);
+        if(q>0)out.push({...arr[i],amount:q});
+        rem-=q;
+      }
+      arr=out;
+    }else if(target>have){
+      let diff=target-have;
+      if(diff>0)arr.push({date:s.date,amount:diff,method:paymentMethod.value,bankNotice:bankNotice.value});
+    }
+    s.payments=arr;
   }
-}let idx=a.findIndex(x=>x.id===s.id);if(idx>=0)a[idx]=s;else a.push(s);put(K.sales,a);saleForm.classList.add('hidden');renderSales();renderInventory();renderReports();updateDashboard()}
+
+  // Drafts are only saved documents: they never affect stock, sales totals, due amounts or reports.
+  if(status==='final'){
+    let needed={};
+    s.items.forEach(l=>{
+      let prod=inv.find(x=>x.id===l.inventoryId);
+      if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)
+        needed[l.inventoryId]=(needed[l.inventoryId]||0)+Number(l.qty||0);
+    });
+    for(let id in needed){
+      let z=inv.find(x=>x.id===id);
+      if(!z)continue;
+      if(Number(z.qty||0)<needed[id]){
+        // restore the old final quantities because they were returned above
+        if(old&&old.status==='final'){
+          (old.items||[]).forEach(l=>{
+            let oz=inv.find(x=>x.id===l.inventoryId);
+            if(oz&&oz.category!=='فحص نظر'&&!oz.isLens)oz.qty-=Number(l.qty||0);
+          });
+        }
+        return alert('الكمية غير كافية في المخزون');
+      }
+    }
+    // Record reversal for an edited final invoice.
+    if(old&&old.status==='final'){
+      (old.items||[]).forEach(l=>{
+        let prod=inv.find(x=>x.id===l.inventoryId);
+        if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)
+          addStockMove('sale-reversal',l.inventoryId,Number(l.qty||0),Number(l.cost??prod.cost??0),todayISO(),s.id);
+      });
+    }
+    Object.keys(needed).forEach(id=>{
+      let z=inv.find(x=>x.id===id);
+      if(z)z.qty-=needed[id];
+    });
+    s.items.forEach(l=>{
+      let prod=inv.find(x=>x.id===l.inventoryId);
+      if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)
+        addStockMove('sale',l.inventoryId,-Number(l.qty||0),Number(l.cost??prod.cost??0),s.date,s.id);
+    });
+    put(K.inventory,inv);
+  }else if(old&&old.status==='final'){
+    // Converting a final invoice back to draft returns stock and records the reversal.
+    (old.items||[]).forEach(l=>{
+      let prod=inv.find(x=>x.id===l.inventoryId);
+      if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)
+        addStockMove('sale-reversal',l.inventoryId,Number(l.qty||0),Number(l.cost??prod.cost??0),todayISO(),s.id);
+    });
+    put(K.inventory,inv);
+  }
+
+  let idx=a.findIndex(x=>x.id===s.id);
+  if(idx>=0)a[idx]=s;else a.push(s);
+  put(K.sales,a);
+  saleForm.classList.add('hidden');
+  renderSales();renderInventory();renderReports();updateDashboard();
+}
+
 function editInvoice(id){let s=getSales().find(x=>x.id===id);if(!s)return;editingInvoice=id;saleForm.classList.remove('hidden');invoiceNo.value=s.id;saleDate.value=s.date;populateSalePatients();salePatientSearch.value=s.patientName||s.patientId||'';salePatient.value=s.patientId;loadInvoicePatient();if(s.exam?.savedAt){invoicePrescription.value=s.exam.savedAt;loadInvoicePrescription()}invoiceLines=(s.items||[]).map(l=>({...l,lineKey:l.lineKey||((l.inventoryId||'')+'|'+(l.groupName||''))}));saleDiscount.value=s.discount||0;salePaidInput.value=s.paid||0;paymentMethod.value=s.paymentMethod||'cash';bankNotice.value=s.bankNotice||'';paymentNote.value=s.note||'';buildProductDatalist();toggleBankFields();renderInvoiceLines();recalcInvoice()}
 function deleteInvoice(id){
   let a=getSales();
@@ -837,7 +935,73 @@ function deleteInvoice(id){
   if(typeof renderDailyReport==='function')renderDailyReport();
   if(typeof renderMonthlyReport==='function')renderMonthlyReport();
   alert('تم حذف الفاتورة بنجاح');
-}function settleInvoice(id){let a=getSales(),s=a.find(x=>x.id===id);if(!s)return;if(Number(s.due||0)<=0)return alert('هذه الفاتورة مسددة بالكامل');let n=prompt('المبلغ المراد سداده',s.due);if(n===null)return;let amount=Number(n);if(!amount||amount<=0)return alert('أدخل مبلغاً صحيحاً');if(amount>s.due)amount=s.due;let method=prompt('طريقة السداد: اكتب نقد أو بنكك','نقد');if(method===null)return;method=String(method).trim();let bankNotice='';if(method==='بنكك'||method==='بنك'){bankNotice=prompt('أدخل رقم الإشعار البنكي','');if(bankNotice===null||!String(bankNotice).trim())return alert('يجب إدخال رقم الإشعار عند السداد بالبنك');bankNotice=String(bankNotice).trim()}else method='نقد';s.paid=Math.min(s.total,s.paid+amount);s.due=s.total-s.paid;s.paymentMethod=method==='بنك'?'bank':'cash';s.bankNotice=method==='بنك'?bankNotice:'';s.settlements=s.settlements||[];s.settlements.push({date:todayISO(),amount,method:s.paymentMethod,bankNotice:s.bankNotice});s.payments=s.payments||[];s.payments.push({date:todayISO(),amount,method:s.paymentMethod,bankNotice:s.bankNotice});put(K.sales,a);renderSales();renderReports();updateDashboard()}
+}function settleInvoice(id){
+  let a=getSales(),s=a.find(x=>x.id===id);
+  if(!s)return;
+  if(s.status==='final'&&Number(s.due||0)<=0)return alert('هذه الفاتورة مسددة بالكامل');
+
+  let n=prompt('المبلغ المراد سداده',s.status==='final'?s.due:s.total);
+  if(n===null)return;
+  let amount=Number(n);
+  if(!amount||amount<=0)return alert('أدخل مبلغاً صحيحاً');
+
+  let remaining=s.status==='final'?Number(s.due||0):Number(s.total||0);
+  if(amount>remaining)amount=remaining;
+
+  let method=prompt('طريقة السداد: اكتب نقد أو بنكك','نقد');
+  if(method===null)return;
+  method=String(method).trim();
+  let bankNotice='';
+  if(method==='بنكك'||method==='بنك'){
+    bankNotice=prompt('أدخل رقم الإشعار البنكي','');
+    if(bankNotice===null||!String(bankNotice).trim())return alert('يجب إدخال رقم الإشعار عند السداد بالبنك');
+    bankNotice=String(bankNotice).trim();
+    method='bank';
+  }else method='cash';
+
+  // A draft becomes a real final invoice only when a payment is recorded.
+  if(s.status==='draft'){
+    let inv=getInventory(),needed={};
+    (s.items||[]).forEach(l=>{
+      let prod=inv.find(x=>x.id===l.inventoryId);
+      if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)
+        needed[l.inventoryId]=(needed[l.inventoryId]||0)+Number(l.qty||0);
+    });
+    for(let iid in needed){
+      let z=inv.find(x=>x.id===iid);
+      if(z&&Number(z.qty||0)<needed[iid])return alert('لا يمكن تحويل الفاتورة إلى نهائية: الكمية غير كافية في المخزون');
+    }
+    Object.keys(needed).forEach(iid=>{
+      let z=inv.find(x=>x.id===iid);
+      if(z)z.qty-=needed[iid];
+    });
+    put(K.inventory,inv);
+    (s.items||[]).forEach(l=>{
+      let prod=inv.find(x=>x.id===l.inventoryId);
+      if(prod&&prod.category!=='فحص نظر'&&!prod.isLens)
+        addStockMove('sale',l.inventoryId,-Number(l.qty||0),Number(l.cost??prod.cost??0),s.date,s.id);
+    });
+    s.status='final';
+    s.paid=amount;
+    s.due=Number(s.total||0)-s.paid;
+    s.paymentMethod=method;
+    s.bankNotice=method==='bank'?bankNotice:'';
+    s.payments=[{date:todayISO(),amount,method,bankNotice:s.bankNotice}];
+    s.settlements=[...s.payments];
+  }else{
+    s.paid=Math.min(s.total,Number(s.paid||0)+amount);
+    s.due=s.total-s.paid;
+    s.paymentMethod=method;
+    s.bankNotice=method==='bank'?bankNotice:'';
+    s.settlements=s.settlements||[];
+    s.settlements.push({date:todayISO(),amount,method:s.paymentMethod,bankNotice:s.bankNotice});
+    s.payments=s.payments||[];
+    s.payments.push({date:todayISO(),amount,method:s.paymentMethod,bankNotice:s.bankNotice});
+  }
+
+  put(K.sales,a);renderSales();renderInventory();renderReports();updateDashboard();
+}
+
 function printInvoice(id){
   let s=getSales().find(x=>x.id===id);if(!s)return;
   let e=s.exam||{}, center=getSettings().centerName||'مركز الحكيم للبصريات';
@@ -975,7 +1139,7 @@ function printInvoice(id){
     <\/script>
 </body></html>`);
   w.document.close();
-}function renderSales(){let s=getSales(),q=(salesSearch.value||'').toLowerCase();salesRows.innerHTML=s.slice().reverse().filter(x=>(x.id+' '+x.patientName).toLowerCase().includes(q)).map(x=>`<tr><td>${x.id}</td><td>${x.date}</td><td>${x.patientName||'—'}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.due)}</td><td>${x.status==='final'?'نهائية':'مبدئية'}</td><td>${x.paymentMethod==='bank'?'بنكك':'نقد'}</td><td><button class="btn" onclick="editInvoice('${x.id}')">تعديل</button> <button class="btn secondary" onclick="settleInvoice('${x.id}')">سداد</button> <button class="btn" onclick="printInvoice('${x.id}')">طباعة</button> <button class="btn secondary" onclick="deleteInvoice('${x.id}')">حذف</button></td></tr>`).join('');let t=s.reduce((a,x)=>a+x.total,0),p=s.reduce((a,x)=>a+x.paid,0);salesTotal.textContent=money(t);salesPaid.textContent=money(p);salesDue.textContent=money(t-p);salesCount.textContent=s.length}
+}function renderSales(){let all=getSales(),s=all.filter(x=>x.status==='final'),q=(salesSearch.value||'').toLowerCase();salesRows.innerHTML=all.slice().reverse().filter(x=>(x.id+' '+x.patientName).toLowerCase().includes(q)).map(x=>`<tr><td>${x.id}</td><td>${x.date}</td><td>${x.patientName||'—'}</td><td>${money(x.total)}</td><td>${money(x.status==='final'?x.paid:0)}</td><td>${money(x.status==='final'?x.due:0)}</td><td>${x.status==='final'?'نهائية':'مبدئية'}</td><td>${x.paymentMethod==='bank'?'بنكك':'نقد'}</td><td><button class="btn" onclick="editInvoice('${x.id}')">تعديل</button> <button class="btn secondary" onclick="settleInvoice('${x.id}')">سداد</button> <button class="btn" onclick="printInvoice('${x.id}')">طباعة</button> <button class="btn secondary" onclick="deleteInvoice('${x.id}')">حذف</button></td></tr>`).join('');let t=s.reduce((a,x)=>a+Number(x.total||0),0),p=s.reduce((a,x)=>a+Number(x.paid||0),0);salesTotal.textContent=money(t);salesPaid.textContent=money(p);salesDue.textContent=money(s.reduce((a,x)=>a+Number(x.due||0),0));salesCount.textContent=s.length}
 function getLensPrices(){
   const defaults=standardLensGroups().map(g=>({name:g.name,price:Number(g.price||0)}));
   const saved=get(K.lensPrices,[]);
@@ -1176,12 +1340,12 @@ function paymentBreakdown(s){
   const paid=Number(s.paid||0); return paid>0?[{date:s.date,amount:paid,method:s.paymentMethod==='bank'?'bank':'cash'}]:[];
 }
 function monthlyPayments(month){
-  let cash=0,bank=0; getSales().forEach(s=>paymentBreakdown(s).forEach(p=>{if(String(p.date||'').slice(0,7)!==month)return;if(p.method==='bank')bank+=p.amount;else cash+=p.amount}));
+  let cash=0,bank=0; getSales().filter(s=>s.status==='final').forEach(s=>paymentBreakdown(s).forEach(p=>{if(String(p.date||'').slice(0,7)!==month)return;if(p.method==='bank')bank+=p.amount;else cash+=p.amount}));
   return {cash,bank};
 }
 function cashActivityMonths(){
   const set=new Set();
-  getSales().forEach(s=>paymentBreakdown(s).forEach(p=>{if(p.date)set.add(String(p.date).slice(0,7))}));
+  getSales().filter(s=>s.status==='final').forEach(s=>paymentBreakdown(s).forEach(p=>{if(p.date)set.add(String(p.date).slice(0,7))}));
   getExpenses().forEach(x=>{if(x.date)set.add(String(x.date).slice(0,7))});
   stockMoves().filter(m=>m.type==='purchase'&&m.paymentMethod).forEach(m=>{if(m.date)set.add(String(m.date).slice(0,7))});
   return [...set].sort();
@@ -1206,7 +1370,7 @@ function renderMonthlyAccounting(){
   set('monthlyOpening',opening);set('monthlyBuy',purchases);set('monthlyAvailable',available);set('monthlyClosing',closing);set('monthlyCOGS',cogs);set('monthlySales',salesTotal);set('monthlyGross',gross);set('monthlyCashPaid',pay.cash);set('monthlyBankPaid',pay.bank);set('monthlyCashExpenses',cashExpenses);set('monthlyBankExpenses',bankExpenses);set('monthlyExpenses',expenses);set('monthlyCashClosing',cashClose);set('monthlyNet',gross-expenses);
   const cp=document.getElementById('cashPrevious');if(cp)cp.value=money(prevCash);
 }
-function dailyPayments(date){let cash=0,bank=0;getSales().forEach(s=>paymentBreakdown(s).forEach(p=>{if(String(p.date||'')!==date)return;if(p.method==='bank')bank+=Number(p.amount||0);else cash+=Number(p.amount||0)}));return {cash,bank}}
+function dailyPayments(date){let cash=0,bank=0;getSales().filter(s=>s.status==='final').forEach(s=>paymentBreakdown(s).forEach(p=>{if(String(p.date||'')!==date)return;if(p.method==='bank')bank+=Number(p.amount||0);else cash+=Number(p.amount||0)}));return {cash,bank}}
 function dailyExpenses(date){const a=getExpenses().filter(x=>String(x.date||'')===date);return {cash:a.filter(x=>x.method!=='bank').reduce((n,x)=>n+Number(x.amount||0),0),bank:a.filter(x=>x.method==='bank').reduce((n,x)=>n+Number(x.amount||0),0),total:a.reduce((n,x)=>n+Number(x.amount||0),0)}}
 function dailyCashPurchase(date){return stockMoves().filter(m=>String(m.date||'')===date&&m.type==='purchase'&&m.paymentMethod==='cash').reduce((n,m)=>n+Number(m.value||0),0)}
 function dailyDates(){const set=new Set();getSales().forEach(s=>{if(s.date)set.add(String(s.date));paymentBreakdown(s).forEach(p=>{if(p.date)set.add(String(p.date))})});getExpenses().forEach(x=>{if(x.date)set.add(String(x.date))});stockMoves().forEach(m=>{if(m.date)set.add(String(m.date))});return [...set].sort()}
@@ -1248,8 +1412,8 @@ function renderDailyReport(){
   set('dailySales',salesTotal);set('dailyCashPaid',pay.cash);set('dailyBankPaid',pay.bank);set('dailyDue',due);set('dailyCashExpenses',ex.cash);set('dailyBankExpenses',ex.bank);set('dailyExpenses',ex.total);set('dailyCashPrevious',prev);set('dailyCashClosing',close);set('dailyNet',net);const nr=document.getElementById('dailyNetRow');if(nr)nr.style.display='table-row';
 }
 
-function renderReports(){ensureStockLedger();let s=getSales(),e=getAllExams(),t=s.reduce((a,x)=>a+Number(x.total||0),0),p=s.reduce((a,x)=>a+Number(x.paid||0),0);reportPatients.textContent=patients.length;reportExams.textContent=e.length;reportSales.textContent=s.length;reportTotalSales.textContent=money(t);reportTotalPaid.textContent=money(p);reportTotalDue.textContent=money(s.reduce((a,x)=>a+Number(x.due||0),0));reportStockCost.textContent=money(inventoryClosingCost());if(document.getElementById('reportMonth')&&!document.getElementById('reportMonth').value)document.getElementById('reportMonth').value=todayISO().slice(0,7);if(document.getElementById('dailyReportDate')&&!document.getElementById('dailyReportDate').value)document.getElementById('dailyReportDate').value=todayISO();renderMonthlyAccounting();renderDailyReport();renderDoctorReport()}
-function updateDashboard(){let s=getSales(),e=getAllExams(),t=s.reduce((a,x)=>a+x.total,0),d=s.reduce((a,x)=>a+x.due,0),n=document.querySelectorAll('#dashboard .card .num');if(n[0])n[0].textContent=patients.length;if(n[1])n[1].textContent=e.length;if(n[2])n[2].textContent=money(t);if(n[3])n[3].textContent=money(d)}
+function renderReports(){ensureStockLedger();let s=getSales().filter(x=>x.status==='final'),e=getAllExams(),t=s.reduce((a,x)=>a+Number(x.total||0),0),p=s.reduce((a,x)=>a+Number(x.paid||0),0);reportPatients.textContent=patients.length;reportExams.textContent=e.length;reportSales.textContent=s.length;reportTotalSales.textContent=money(t);reportTotalPaid.textContent=money(p);reportTotalDue.textContent=money(s.reduce((a,x)=>a+Number(x.due||0),0));reportStockCost.textContent=money(inventoryClosingCost());if(document.getElementById('reportMonth')&&!document.getElementById('reportMonth').value)document.getElementById('reportMonth').value=todayISO().slice(0,7);if(document.getElementById('dailyReportDate')&&!document.getElementById('dailyReportDate').value)document.getElementById('dailyReportDate').value=todayISO();renderMonthlyAccounting();renderDailyReport();renderDoctorReport()}
+function updateDashboard(){let s=getSales().filter(x=>x.status==='final'),e=getAllExams(),t=s.reduce((a,x)=>a+Number(x.total||0),0),d=s.reduce((a,x)=>a+Number(x.due||0),0),n=document.querySelectorAll('#dashboard .card .num');if(n[0])n[0].textContent=patients.length;if(n[1])n[1].textContent=e.length;if(n[2])n[2].textContent=money(t);if(n[3])n[3].textContent=money(d)}
 function saveSettings(){
   if(!requireAdmin())return;
   let email=(setEmail?.value||'').trim();
@@ -1908,6 +2072,27 @@ function renderLicenseUI(l){
 }
 async function checkLicense(){
   if(sellerAuthorized)return true;
+  // OFFLINE-FIRST: never require Supabase/Google when this device has a valid
+  // local license cache from a previous successful online activation.
+  if(!isOnline()){
+    const cached=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
+    if(cached&&licenseIsActive(cached)){
+      currentLicense=cached;renderLicenseUI(cached);hideLicenseGate();return true;
+    }
+    const pass=JSON.parse(localStorage.getItem('hakim_offline_pass_v57')||'null');
+    if(pass && (!pass.expires_at || new Date(pass.expires_at).getTime()>Date.now())){
+      currentLicense=cached||{center_id:pass.center_id||localStorage.getItem('hakim_cloud_center')||'',active:true,expires_at:pass.expires_at||''};
+      renderLicenseUI(currentLicense);hideLicenseGate();return true;
+    }
+    const off=localStorage.getItem('hakim_offline_activated')==='1';
+    const exp=localStorage.getItem('hakim_offline_license_expiry')||'';
+    if(off && (!exp || new Date(exp).getTime()>Date.now())){
+      currentLicense=cached||{center_id:localStorage.getItem('hakim_cloud_center')||'',active:true,expires_at:exp};
+      renderLicenseUI(currentLicense);hideLicenseGate();return true;
+    }
+    showLicenseGate('لا يوجد اشتراك فعال على هذا الجهاز. اربطه بحساب Google وتحقق من الاشتراك أولاً.');
+    return false;
+  }
   if(!cloudClient&&!await cloudInit())return false;
   if(!await ensureGoogleCenter())return false;
   if(isOnline()){
@@ -1920,9 +2105,7 @@ async function checkLicense(){
     if(!licenseIsActive(l)){showLicenseGate(l.active===false?'تم إيقاف اشتراك هذا المركز. يرجى التجديد.':'انتهى اشتراك هذا المركز. يرجى التجديد.');return false}
     hideLicenseGate();return true;
   }
-  const cached=JSON.parse(localStorage.getItem('hakim_license_cache')||'null');
-  if(cached&&licenseIsActive(cached)){currentLicense=cached;renderLicenseUI(cached);persistOfflineLicense(cached);hideLicenseGate();return true}
-  showLicenseGate('يجب الاتصال بالإنترنت للتحقق من اشتراك المركز.');return false;
+  return false;
 }
 
 async function retryLicenseCheck(){await checkLicense()}

@@ -1,4 +1,4 @@
-const CACHE='hakim-optics-offline-v57';
+const CACHE='hakim-optics-offline-v58';
 const SHELL=[
   './',
   './index.html',
