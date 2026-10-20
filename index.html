@@ -307,20 +307,20 @@ body{background:var(--hakim-bg);color:var(--hakim-ink)}
 <div class="top"><div class="title"><h1>فاتورة مبيعات جديدة</h1><p>المريض + الفحص + الوصفة + الأصناف + الدفع + الحفظ في شاشة واحدة</p></div><button class="btn secondary" onclick="newInvoice()">↻ فاتورة جديدة</button></div>
 <div class="cards"><div class="card"><div class="label">إجمالي المبيعات</div><div class="num" id="salesTotal">0</div></div><div class="card"><div class="label">المدفوع</div><div class="num" id="salesPaid">0</div></div><div class="card"><div class="label">المتبقي</div><div class="num" id="salesDue">0</div></div><div class="card"><div class="label">عدد الفواتير</div><div class="num" id="salesCount">0</div></div></div>
 <div class="panel" style="margin-top:12px"><h3>👤 بيانات المريض</h3><div class="form"><div class="full"><label>اختيار مريض موجود — ابحث بالاسم أو الهاتف أو رقم الملف</label><input id="salesExistingPatient" list="salesExistingPatientList" oninput="loadSalesPatient()" placeholder="اسم المريض أو رقم الهاتف أو رقم الملف"/><datalist id="salesExistingPatientList"></datalist><input id="salePatient" type="hidden"/></div><div><label>اسم المريض</label><input id="salesPatientName" placeholder="اسم المريض"/></div><div><label>رقم الهاتف</label><input id="salesPatientPhone" placeholder="رقم الهاتف"/></div><div><label>رقم الملف</label><input id="salesPatientFileNo" placeholder="يظهر تلقائياً" readonly=""/></div></div></div>
-<div class="panel" style="margin-top:12px"><h3>👁️ فحص النظر والوصفة</h3><div class="form"><div><label>تاريخ الفحص</label><input id="salesExamDate" type="date"/></div><div><label>نوع الفحص *</label><select id="salesExamType"><option value="">اختر نوع الفحص</option><option value="داخلي">داخلي</option><option value="خارجي">خارجي</option></select></div><div><label>اسم الطبيب الفاحص *</label><input id="salesDoctorName" placeholder="اسم الطبيب (داخلي أو خارجي)"/></div></div><div class="rx-wrap" dir="ltr" style="margin-top:10px"><table class="rx-table" dir="ltr"><thead><tr><th>Eye</th><th>SPH</th><th>CYL</th><th>AXIS</th><th>V.A</th></tr></thead><tbody><tr><td><strong>RE</strong></td><td><input id="salesRxRS" placeholder="SPH"/></td><td><input id="salesRxRC" placeholder="CYL"/></td><td><input id="salesRxRA" placeholder="AXIS"/></td><td><input id="salesVaR" placeholder="6/6"/></td></tr><tr><td><strong>LE</strong></td><td><input id="salesRxLS" placeholder="SPH"/></td><td><input id="salesRxLC" placeholder="CYL"/></td><td><input id="salesRxLA" placeholder="AXIS"/></td><td><input id="salesVaL" placeholder="6/6"/></td></tr><tr><td colspan="5"><label style="display:block;text-align:center">ADD</label><input id="salesAdd" placeholder="+"/></td></tr></tbody></table></div><div class="form" style="margin-top:10px"><div><label>PD</label><input id="salesPd" placeholder="mm"/></div><div><label>التشخيص</label><input id="salesDiagnosis" placeholder="Myopia / Astigmatism"/></div><div class="full"><label>ملاحظات الفحص</label><input id="salesExamNotes"/></div></div></div>
+<div class="panel" style="margin-top:12px"><h3>👁️ فحص النظر والوصفة</h3><div class="form"><div><label>تاريخ الفحص</label><input id="salesExamDate" type="date"/></div><div><label>نوع الفحص *</label><select id="salesExamType" onchange="toggleSalesDoctorField()"><option value="">اختر نوع الفحص</option><option value="داخلي">داخلي</option><option value="خارجي">خارجي</option></select></div><div><label>اسم الطبيب (للفحص الداخلي فقط)</label><input id="salesDoctorName" placeholder="اسم الطبيب"/></div></div><div class="rx-wrap" dir="ltr" style="margin-top:10px"><table class="rx-table" dir="ltr"><thead><tr><th>Eye</th><th>SPH</th><th>CYL</th><th>AXIS</th><th>V.A</th></tr></thead><tbody><tr><td><strong>RE</strong></td><td><input id="salesRxRS" placeholder="SPH"/></td><td><input id="salesRxRC" placeholder="CYL"/></td><td><input id="salesRxRA" placeholder="AXIS"/></td><td><input id="salesVaR" placeholder="6/6"/></td></tr><tr><td><strong>LE</strong></td><td><input id="salesRxLS" placeholder="SPH"/></td><td><input id="salesRxLC" placeholder="CYL"/></td><td><input id="salesRxLA" placeholder="AXIS"/></td><td><input id="salesVaL" placeholder="6/6"/></td></tr><tr><td colspan="5"><label style="display:block;text-align:center">ADD</label><input id="salesAdd" placeholder="+"/></td></tr></tbody></table></div><div class="form" style="margin-top:10px"><div><label>PD</label><input id="salesPd" placeholder="mm"/></div><div><label>التشخيص</label><input id="salesDiagnosis" placeholder="Myopia / Astigmatism"/></div><div class="full"><label>ملاحظات الفحص</label><input id="salesExamNotes"/></div></div></div>
 <div class="panel" id="saleForm" style="margin-top:12px"><div class="top"><div><h3>🧾 الفاتورة والأصناف والدفع</h3><p>المبدئية لا تؤثر على المخزون أو التقارير أو المستحقات. النهائية تتطلب دفعاً كاملاً أو جزئياً.</p></div><div><button class="btn secondary" onclick="saveCombinedInvoice('draft')">حفظ مبدئي</button> <button class="btn" onclick="saveCombinedInvoice('final')">حفظ نهائي</button></div></div><div class="form"><div><label>رقم الفاتورة</label><input id="invoiceNo" readonly=""/></div><div><label>تاريخ الفاتورة</label><input id="saleDate" type="date"/></div><div><label>المريض المرتبط</label><input id="salePatientSearch" readonly=""/></div><div><label>الهاتف</label><input id="invoicePhone" readonly=""/></div><div><label>نوع الفحص</label><input id="invoiceExamType" readonly=""/></div><div><label>الطبيب الفاحص</label><input id="invoiceDoctor" readonly=""/></div><div class="full"><label>الوصفة / الفحص المحفوظ</label><select id="invoicePrescription" onchange="loadInvoicePrescription()"></select></div></div>
-<div class="panel" style="margin-top:12px;border:1px solid #e5e7eb;box-shadow:none"><h3>📦 أصناف المبيعات</h3><div class="form"><div class="full"><label>إضافة النظارات إلى الفاتورة نفسها</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn secondary" type="button" onclick="matchLensFromPrescription('distance')">👓 مطابقة وإضافة نظارة نظر (بعيد)</button><button class="btn secondary" type="button" onclick="matchLensFromPrescription('reading')">📖 مطابقة وإضافة نظارة قراءة (قريب)</button></div><small>يمكن إضافة النظارتين معاً في الفاتورة نفسها. نظارة القراءة تستخدم قيمة ADD المحفوظة في وصفة المريض.</small></div><div><label>ورشة التنفيذ</label><select id="saleWorkshopKind" onchange="saveInvoiceWorkshopChoice()"><option value="center">ورشة المركز</option><option value="external">ورشة خارجية</option></select></div><div><label>نوع العدسة</label><select id="saleLensType" onchange="selectInvoiceLensGroup()"><option value="">اختر نوع العدسة</option><option value="WT">WT</option><option value="PH">PH</option><option value="BluCut">BluCut</option><option value="Polarized">Polarized</option><option value="Progressive">Progressive</option><option value="Multifocal">Multifocal</option><option value="Bifocal">Bifocal</option></select><small id="saleLensGroupPriceHint" style="display:block;color:#64748b;margin-top:4px">يختار النظام قروب المقاس المطابق للوصفة ويعرض سعره عند المطابقة.</small></div><div class="full"><small id="lensMatchHint">اختر الوصفة ثم نوع العدسة؛ سيطابق النظام القروب المسجل في المخزون.</small></div><div class="full"><label>الصنف من المخزون</label><input id="saleItem" list="productList" oninput="autoProductPrice()"/><datalist id="productList"></datalist></div><div><label>الكمية</label><input id="saleQty" min="1" oninput="calcLine()" type="number" value="1"/></div><div><label>سعر البيع</label><input id="salePrice" readonly="" type="number"/></div><div><label>الإجمالي</label><input id="lineTotal" readonly=""/></div><div><button class="btn" onclick="addSaleLine()">إضافة الصنف</button> <button class="btn secondary" onclick="clearSaleItem()" type="button">مسح</button></div></div><table><thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th><th></th></tr></thead><tbody id="invoiceLines"></tbody></table></div>
+<div class="panel" style="margin-top:12px;border:1px solid #e5e7eb;box-shadow:none"><h3>📦 أصناف المبيعات</h3><div class="form"><div class="full"><label>إضافة النظارات إلى الفاتورة نفسها</label><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn secondary" type="button" onclick="matchLensFromPrescription('distance')">👓 مطابقة وإضافة نظارة نظر (بعيد)</button><button class="btn secondary" type="button" onclick="matchLensFromPrescription('reading')">📖 مطابقة وإضافة نظارة قراءة (قريب)</button> <button class="btn" type="button" onclick="matchBothGlasses()">👓📖 إضافة النظارتين معاً</button></div><small>يمكن إضافة النظارتين معاً في الفاتورة نفسها. نظارة القراءة تستخدم قيمة ADD المحفوظة في وصفة المريض.</small></div><div><label>ورشة التنفيذ</label><select id="saleWorkshopKind" onchange="saveInvoiceWorkshopChoice()"><option value="center">ورشة المركز</option><option value="external">ورشة خارجية</option></select></div><div><label>نوع العدسة</label><select id="saleLensType" onchange="selectInvoiceLensGroup()"><option value="">اختر نوع العدسة</option><option value="WT">WT</option><option value="PH">PH</option><option value="BluCut">BluCut</option><option value="Polarized">Polarized</option><option value="Progressive">Progressive</option><option value="Multifocal">Multifocal</option><option value="Bifocal">Bifocal</option></select><small id="saleLensGroupPriceHint" style="display:block;color:#64748b;margin-top:4px">يختار النظام قروب المقاس المطابق للوصفة ويعرض سعره عند المطابقة.</small></div><div class="full"><small id="lensMatchHint">اختر الوصفة ثم نوع العدسة؛ سيطابق النظام القروب المسجل في المخزون.</small></div><div class="full"><label>الصنف من المخزون</label><input id="saleItem" list="productList" oninput="autoProductPrice()"/><datalist id="productList"></datalist></div><div><label>الكمية</label><input id="saleQty" min="1" oninput="calcLine()" type="number" value="1"/></div><div><label>سعر البيع</label><input id="salePrice" readonly="" type="number"/></div><div><label>الإجمالي</label><input id="lineTotal" readonly=""/></div><div><button class="btn" onclick="addSaleLine()">إضافة الصنف</button> <button class="btn secondary" onclick="clearSaleItem()" type="button">مسح</button></div></div><table><thead><tr><th>الصنف</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th><th></th></tr></thead><tbody id="invoiceLines"></tbody></table></div>
 <div class="form" style="margin-top:12px"><div><label>الخصم</label><input id="saleDiscount" min="0" oninput="recalcInvoice()" type="number" value="0"/></div><div><label>الإجمالي</label><input id="invoiceTotal" readonly=""/></div><div><label>المدفوع</label><input id="salePaidInput" min="0" type="number" value="0"/></div><div><label>طريقة الدفع</label><select id="paymentMethod" onchange="toggleBankFields()"><option value="cash">نقد</option><option value="bank">بنكك</option></select></div><div class="hidden" id="bankFields"><label>رقم الإشعار</label><input id="bankNotice"/></div><div class="full"><label>ملاحظة</label><input id="paymentNote"/></div></div></div>
 </div>
-<div class="module-view hidden" id="salesFinalView"><div class="panel" style="margin-top:0;overflow:auto"><div class="top"><div><h3>إدارة فواتير المبيعات</h3><p>الفواتير النهائية فقط — المبيعات والمخزون والمبالغ المستحقة.</p></div></div><div class="search"><input id="salesSearchFinal" oninput="renderSales()" placeholder="ابحث برقم الفاتورة أو المريض"/></div><table style="min-width:900px"><thead><tr><th>الفاتورة</th><th>التاريخ</th><th>المريض</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>الدفع</th><th>إجراء</th></tr></thead><tbody id="salesRowsFinal"></tbody></table></div></div>
-<div class="module-view hidden" id="salesDraftView"><div class="panel" style="margin-top:0;overflow:auto"><div class="top"><div><h3>إدارة الفواتير المبدئية</h3><p>المبدئية محفوظة فقط ولا تؤثر على المخزون أو التقارير أو المبالغ المستحقة.</p></div></div><div class="search"><input id="salesSearchDraft" oninput="renderSales()" placeholder="ابحث برقم الفاتورة أو المريض"/></div><table style="min-width:900px"><thead><tr><th>الفاتورة</th><th>التاريخ</th><th>المريض</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>الدفع</th><th>إجراء</th></tr></thead><tbody id="salesRowsDraft"></tbody></table></div></div>
+<div class="module-view hidden" id="salesFinalView"><div class="panel" style="margin-top:0;overflow:auto"><div class="top"><div><h3>إدارة فواتير المبيعات</h3><p>الفواتير النهائية فقط — المبيعات والمخزون والمبالغ المستحقة.</p></div></div><div class="search"><input id="salesSearchFinal" oninput="renderSales()" placeholder="ابحث بالاسم أو الهاتف أو رقم الفاتورة"/></div><table style="min-width:900px"><thead><tr><th>الفاتورة</th><th>التاريخ</th><th>المريض</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>الدفع</th><th>إجراء</th></tr></thead><tbody id="salesRowsFinal"></tbody></table></div></div>
+<div class="module-view hidden" id="salesDraftView"><div class="panel" style="margin-top:0;overflow:auto"><div class="top"><div><h3>إدارة الفواتير المبدئية</h3><p>المبدئية محفوظة فقط ولا تؤثر على المخزون أو التقارير أو المبالغ المستحقة.</p></div></div><div class="search"><input id="salesSearchDraft" oninput="renderSales()" placeholder="ابحث بالاسم أو الهاتف أو رقم الفاتورة"/></div><table style="min-width:900px"><thead><tr><th>الفاتورة</th><th>التاريخ</th><th>المريض</th><th>الإجمالي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>الدفع</th><th>إجراء</th></tr></thead><tbody id="salesRowsDraft"></tbody></table></div></div>
 </section><section class="hidden" id="workshop">
 <div class="top"><div class="title"><h1>🛠️ إدارة الورشة</h1><p>طلبات النظارات، مخزون الورشة، ومواعيد التسليم في مكان واحد</p></div><button class="btn secondary" onclick="renderWorkshop()">🔄 تحديث</button></div>
 <div class="cards"><div class="card"><div class="label">لم تُرسل للورشة</div><div class="num" id="workshopCountUnsent">0</div></div><div class="card"><div class="label">بانتظار التركيب</div><div class="num" id="workshopCountPending">0</div></div><div class="card"><div class="label">جاهز للتسليم</div><div class="num" id="workshopCountReady">0</div></div><div class="card"><div class="label">تم التسليم</div><div class="num" id="workshopCountDelivered">0</div></div></div>
 <div class="panel" style="margin-top:14px"><div class="module-menu" id="workshopMenu" style="grid-template-columns:repeat(4,minmax(150px,1fr))">
 <button class="module-btn active" onclick="setWorkshopView('unsent',this)">📤 لم تُرسل للورشة</button><button class="module-btn" onclick="setWorkshopView('pending_install',this)">⏳ بانتظار التركيب</button><button class="module-btn" onclick="setWorkshopView('ready',this)">✅ جاهز للتسليم</button><button class="module-btn" onclick="setWorkshopView('delivered',this)">📦 تم التسليم</button>
 </div>
-<div class="panel" style="margin-top:12px;border:1px solid #cbd5e1">
+<div style="margin:12px 0"><button class="btn secondary" type="button" id="wsStockToggleBtn" onclick="toggleWorkshopStock()">📦 مخزون عدسات الورشة</button></div><div class="panel hidden" id="wsStockPanel" style="margin-top:12px;border:1px solid #cbd5e1">
 <h3>📦 مخزون عدسات الورشة</h3>
 <p style="color:#64748b;font-size:12px">مخزون مستقل عن المخزون العام، مرتبط بأنواع العدسات وقروبات المقاسات الموجودة في النظام. اختر نوع العدسة والقروب ثم أدخل الكمية المتوفرة.</p>
 <div class="form">
@@ -336,7 +336,7 @@ body{background:var(--hakim-bg);color:var(--hakim-ink)}
 <div class="search"><input id="workshopSearch" oninput="renderWorkshop()" placeholder="بحث برقم الفاتورة أو اسم المريض أو الهاتف"/></div>
 <div style="overflow:auto"><table style="min-width:950px"><thead><tr><th>الفاتورة</th><th>التاريخ</th><th>المريض والهاتف</th><th>الأصناف / الوصفة</th><th>تاريخ التسليم المتوقع</th><th>الحالة والتواريخ</th><th>الإجراء</th></tr></thead><tbody id="workshopRows"></tbody></table></div></div>
 </section><section class="hidden" id="inventory"><div class="top"><div class="title"><h1>المخزون</h1><p>الأسعار والكميات وقروبات العدسات القياسية — كشف النظر يظهر كخدمة ثابتة بدون كمية</p></div><button class="btn admin-only" id="inventoryAddBtn" onclick="newInventoryItem();return false" type="button">+ إضافة صنف</button></div><div class="cards"><div class="card"><div class="label">عدد الأصناف</div><div class="num" id="inventoryCount">0</div></div><div class="card"><div class="label">إجمالي الكميات</div><div class="num" id="inventoryQty">0</div></div><div class="card"><div class="label">منخفض المخزون</div><div class="num" id="inventoryLow">0</div></div><div class="card"><div class="label">قيمة المخزون</div><div class="num" id="inventoryValue">0</div></div></div>
-<div class="panel" style="margin-top:15px"><div class="top"><div><h3>أسعار قروبات العدسات</h3><p style="color:#64748b;font-size:12px">حدد سعر كل قروب هنا. هذه الأسعار هي التي تظهر تلقائياً عند اختيار القروب في الفاتورة.</p></div><button class="btn admin-only" onclick="saveLensPrices()">حفظ أسعار القروبات</button></div><div id="globalLensPriceList"></div></div>
+<div class="panel" style="margin-top:15px"><button class="btn secondary" type="button" onclick="toggleLensPricePanel()" aria-expanded="false">💲 أسعار قروبات العدسات ▾</button><div id="globalLensPricePanel" class="hidden"><div class="top"><div><p style="color:#64748b;font-size:12px">حدد سعر كل قروب؛ تظهر الأسعار تلقائياً عند المطابقة في الفاتورة.</p></div><button class="btn admin-only" onclick="saveLensPrices()">حفظ الأسعار</button></div><div id="globalLensPriceList"></div></div></div>
 <div class="panel hidden" id="inventoryForm" style="margin-top:15px"><h3>إضافة / تعديل صنف</h3><input id="invId" type="hidden"/><div class="form"><div><label>اسم الصنف</label><input id="invName"/></div><div><label>الفئة</label><select id="invCategory"><option>فريمات</option><option>عدسات</option><option>عدسات لاصقة</option><option>إكسسوارات</option><option>أخرى</option><option>فحص نظر</option></select></div><div><label>الكود</label><input id="invCode"/></div><div><label>الكمية</label><input id="invQty" min="0" type="number"/><small id="fixedExamHint" style="display:block;color:#64748b">فحص النظر صنف ثابت بدون كمية.</small></div><div><label>حد التنبيه</label><input id="invMin" min="0" type="number" value="2"/></div><div><label>سعر الشراء</label><input id="invCost" min="0" type="number"/></div><div><label>سعر البيع</label><input id="invSell" min="0" type="number"/></div><div><label>المورد</label><input id="invSupplier"/></div><div><label>طريقة دفع الشراء</label><select id="invStockMethod"><option value="cash">نقد</option><option value="bank">بنكك</option></select></div><div><label>رقم إشعار الشراء البنكي</label><input id="invStockBankNotice"/></div><div class="full"><label><input id="invIsLens" onchange="toggleLensGroups()" type="checkbox"/> صنف عدسات</label></div></div><div class="hidden" id="lensGroups">
 <h3>قروبات العدسات القياسية</h3>
 <p style="color:#64748b;font-size:12px">يتم تثبيت القروبات المتعارف عليها، مع إمكانية تعديل سعر كل قروب.</p>
@@ -345,12 +345,12 @@ body{background:var(--hakim-bg);color:var(--hakim-ink)}
 <div class="panel" style="margin-top:15px;overflow:auto"><div id="inventoryUserNotice" style="color:#64748b;font-size:13px;margin-bottom:8px">للمستخدم: عرض المخزون فقط — التعديل متاح للـAdmin من صفحة الإدارة.</div><div class="search"><input id="inventorySearch" oninput="renderInventory()" placeholder="ابحث باسم الصنف أو الكود"/></div><table style="min-width:900px"><thead><tr><th>الكود</th><th>الصنف</th><th>الفئة</th><th>الكمية</th><th>شراء</th><th>بيع</th><th>قروبات العدسات</th><th>الحالة</th><th></th></tr></thead><tbody id="inventoryRows"></tbody></table></div></section><section class="hidden" id="reports">
 <div class="top"><div class="title"><h1>التقارير</h1><p>تقارير المبيعات والمخزون والمنصرفات والبنك والطبيب الفاحص</p></div></div>
 <div class="report-menu" id="reportMenu">
-<button class="module-btn active" onclick="setReportView('sales-summary',this)">📊 ملخص حركة المبيعات</button>
-<button class="module-btn" onclick="setReportView('sales-detail',this)">🧾 تفصيل حركة المبيعات</button>
-<button class="module-btn" onclick="setReportView('stock-detail',this)">📦 تفصيل حركة المخزن</button>
-<button class="module-btn" onclick="setReportView('expenses-detail',this)">💸 تفصيل حركة المنصرفات</button>
+<button class="module-btn active" onclick="setReportView('sales-summary',this)">📊 الملخص المالي</button>
+<button class="module-btn" onclick="setReportView('sales-detail',this)">🧾 حركة المبيعات</button>
+<button class="module-btn" onclick="setReportView('stock-detail',this)">📦 جرد نهاية الشهر / المخزون</button>
+<button class="module-btn" onclick="setReportView('expenses-detail',this)">💸 المنصرفات</button>
 <button class="module-btn wide" onclick="setReportView('bankak',this)">🏦 كشف بنكك</button>
-<button class="module-btn wide" onclick="setReportView('doctor',this)">👨‍⚕️ تفصيل حركة المبيعات حسب الطبيب</button>
+<button class="module-btn wide" onclick="setReportView('doctor',this)">👨‍⚕️ تقرير الطبيب</button>
 </div>
 <div class="module-view" id="reportView-sales-summary">
 <div class="cards"><div class="card"><div class="label">المرضى</div><div class="num" id="reportPatients">0</div></div><div class="card"><div class="label">الفحوصات</div><div class="num" id="reportExams">0</div></div><div class="card"><div class="label">الفواتير النهائية</div><div class="num" id="reportSales">0</div></div></div>
@@ -979,7 +979,7 @@ function fillExamPatient(){
   document.getElementById('examPatient').value=p?.id||'';
   document.getElementById('examPhone').value=p?.phone||'';
 }
-function saveExam(){let ids=['examPatient','examPhone','examDate','examType','doctorName','rxRS','rxRC','rxRA','vaR','rxLS','rxLC','rxLA','vaL','add','pd','diagnosis','examNotes'],e={};ids.forEach(id=>e[id]=document.getElementById(id)?.value||'');if(!e.examPatient)return alert('اكتب اسم المريض أو رقم الملف واختر مريضاً مطابقاً');e.savedAt=new Date().toISOString();let a=getAllExams();a.push(e);put(K.exams,a);let p=patients.find(x=>x.id===e.examPatient);if(p){p.last=e.examDate||'اليوم';put(K.patients,patients)}alert('تم حفظ الفحص والوصفة داخل ملف المريض');renderPatients()}
+function saveExam(){let ids=['examPatient','examPhone','examDate','examType','doctorName','rxRS','rxRC','rxRA','vaR','rxLS','rxLC','rxLA','vaL','add','pd','diagnosis','examNotes'],e={};ids.forEach(id=>e[id]=document.getElementById(id)?.value||'');if(e.examType==='خارجي')e.doctorName='';if(!e.examPatient)return alert('اكتب اسم المريض أو رقم الملف واختر مريضاً مطابقاً');e.savedAt=new Date().toISOString();let a=getAllExams();a.push(e);put(K.exams,a);let p=patients.find(x=>x.id===e.examPatient);if(p){p.last=e.examDate||'اليوم';put(K.patients,patients)}alert('تم حفظ الفحص والوصفة داخل ملف المريض');renderPatients()}
 function openPatientHistory(id){const p=patients.find(x=>x.id===id);if(!p)return;document.querySelectorAll('main section').forEach(s=>s.classList.add('hidden'));document.getElementById('patientHistory').classList.remove('hidden');document.getElementById('historyPatientName').textContent=p.name;document.getElementById('historyPatientId').value=p.id;document.getElementById('historyPatientPhone').value=p.phone||'';let a=getAllExams().filter(e=>e.examPatient===id);document.getElementById('examHistoryList').innerHTML=a.length?a.map((e,i)=>`<div class="panel" style="margin-bottom:10px"><b>فحص ${i+1}</b> — ${e.examDate||''} — ${e.examType||''} — الطبيب: ${e.doctorName||'—'}<table><tr><th>العين</th><th>SPH</th><th>CYL</th><th>AXIS</th><th>V.A</th></tr><tr><td>RE</td><td>${e.rxRS||''}</td><td>${e.rxRC||''}</td><td>${e.rxRA||''}</td><td>${e.vaR||''}</td></tr><tr><td>LE</td><td>${e.rxLS||''}</td><td>${e.rxLC||''}</td><td>${e.rxLA||''}</td><td>${e.vaL||''}</td></tr></table></div>`).join(''):'<p>لا توجد فحوصات محفوظة.</p>'}
 function nextInvoice(){return(getSettings().invoicePrefix||'HK-INV-')+String(getSales().length+1).padStart(5,'0')}
 function buildProductDatalist(){
@@ -1000,7 +1000,7 @@ function refreshInvoiceLensGroups(selected=''){
  sel.innerHTML='<option value="">اختر نوع العدسة</option>'+choices.map(([v,t])=>`<option value="${v}">${t}</option>`).join('');if(selected&&choices.some(x=>x[0]===selected))sel.value=selected;updateInvoiceLensGroupPrice();
 }
 function updateInvoiceLensGroupPrice(){const hint=document.getElementById('saleLensGroupPriceHint');if(hint)hint.textContent='اختر نوع العدسة ثم اضغط مطابقة البعيد أو القراءة؛ سيختار النظام قروب المقاس من الوصفة ويعرض السعر تلقائياً.';}
-function selectInvoiceLensGroup(){const sel=document.getElementById('saleLensType');updateInvoiceLensGroupPrice();if(sel?.value){if(document.getElementById('invoicePrescription')?.value){matchLensFromPrescription('distance');}else{const hint=document.getElementById('lensMatchHint');if(hint)hint.textContent='تم اختيار '+sel.value+'. اختر وصفة محفوظة أولاً ليحدد النظام قروب المقاس والسعر تلقائياً.';}}}
+function selectInvoiceLensGroup(){const sel=document.getElementById('saleLensType');updateInvoiceLensGroupPrice();if(sel?.value){if(currentInvoicePrescription()){matchLensFromPrescription('distance');}else{const hint=document.getElementById('lensMatchHint');if(hint)hint.textContent='تم اختيار '+sel.value+'. أدخل الوصفة أعلاه لمطابقة قروب المقاس والسعر تلقائياً.';}}}
 function saveInvoiceWorkshopChoice(){ /* The choice is persisted with the invoice on save. */ }
 
 function newInvoice(){
@@ -1009,7 +1009,7 @@ function newInvoice(){
   salePatientSearch.value='';salePatient.value='';populateSalePatients();
   const ids=['salesExistingPatient','salesPatientName','salesPatientPhone','salesPatientFileNo','salesDoctorName','salesRxRS','salesRxRC','salesRxRA','salesVaR','salesRxLS','salesRxLC','salesRxLA','salesVaL','salesAdd','salesPd','salesDiagnosis','salesExamNotes'];
   ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  salesExamDate.value=todayISO();salesExamType.value='داخلي';window.salesExamSavedAt='';
+  salesExamDate.value=todayISO();salesExamType.value='داخلي';toggleSalesDoctorField();window.salesExamSavedAt='';
   buildProductDatalist();
   if(document.getElementById('saleWorkshopKind'))document.getElementById('saleWorkshopKind').value='center';
   if(document.getElementById('saleLensType'))document.getElementById('saleLensType').value='';
@@ -1062,9 +1062,11 @@ function ensureSalesPatient(){
   p={id,name,phone,last:salesExamDate.value||'لم يزر بعد'};
   patients.push(p);put(K.patients,patients);salePatient.value=id;salePatientSearch.value=name;salesPatientFileNo.value=id;populateSalePatients();populateExamPatients();renderPatients();return p;
 }
+
+function toggleSalesDoctorField(){const internal=document.getElementById('salesExamType')?.value==='داخلي';const el=document.getElementById('salesDoctorName');if(el){el.disabled=!internal;if(!internal)el.value='';el.placeholder=internal?'اسم الطبيب للفحص الداخلي':'لا يُسجل طبيب للفحص الخارجي';}}
 function saveSalesExam(p){
   if(!p)return null;
-  const examType=salesExamType.value||'داخلي'; const vals={examPatient:p.id,examPhone:p.phone||'',examDate:salesExamDate.value||todayISO(),examType,doctorName:(salesDoctorName.value||'').trim(),rxRS:salesRxRS.value||'',rxRC:salesRxRC.value||'',rxRA:salesRxRA.value||'',vaR:salesVaR.value||'',rxLS:salesRxLS.value||'',rxLC:salesRxLC.value||'',rxLA:salesRxLA.value||'',vaL:salesVaL.value||'',add:salesAdd.value||'',pd:salesPd.value||'',diagnosis:salesDiagnosis.value||'',examNotes:salesExamNotes.value||''};
+  const examType=salesExamType.value||'داخلي'; const vals={examPatient:p.id,examPhone:p.phone||'',examDate:salesExamDate.value||todayISO(),examType,doctorName:examType==='داخلي'?(salesDoctorName.value||'').trim():'',rxRS:salesRxRS.value||'',rxRC:salesRxRC.value||'',rxRA:salesRxRA.value||'',vaR:salesVaR.value||'',rxLS:salesRxLS.value||'',rxLC:salesRxLC.value||'',rxLA:salesRxLA.value||'',vaL:salesVaL.value||'',add:salesAdd.value||'',pd:salesPd.value||'',diagnosis:salesDiagnosis.value||'',examNotes:salesExamNotes.value||''};
   const hasExam=Object.entries(vals).some(([k,v])=>!['examPatient','examPhone','examDate','examType'].includes(k)&&String(v||'').trim());
   if(!hasExam)return null;
   if(window.salesExamSavedAt){
@@ -1085,25 +1087,43 @@ function saveCombinedInvoice(status){
   const patientName=(document.getElementById('salesPatientName')?.value||'').trim();
   if(!salePatient.value&&!patientName)return alert('أدخل اسم المريض أو اختر مريضاً مسجلاً');
   if(!salesExamType.value)return alert('اختر نوع الفحص: داخلي أو خارجي');
-  if(!(salesDoctorName.value||'').trim())return alert('أدخل اسم الطبيب الفاحص، سواء كان الفحص داخلياً أو خارجياً');
+  if((salesExamType.value==='داخلي')&&!(salesDoctorName.value||'').trim())return alert('أدخل اسم الطبيب للفحص الداخلي');
   if(!invoiceLines.length)return alert('أضف صنفاً واحداً على الأقل للفاتورة');
   const total=Number(invoiceTotal.value||0), paid=Math.min(total,Math.max(0,Number(salePaidInput.value||0)));
   if(status==='final'&&paid<=0)return alert('لا يمكن حفظ الفاتورة نهائية بدون دفع. أدخل مبلغاً كاملاً أو جزئياً ثم احفظ.');
   if(status==='final'&&paymentMethod.value==='bank'&&paid>0&&!String(bankNotice.value||'').trim())return alert('يجب إدخال رقم الإشعار عند السداد بالبنك');
   const p=ensureSalesPatient();
   if(!p)return alert('تعذر حفظ بيانات المريض');
-  const e=saveSalesExam(p);
-  if(!e)return alert('تعذر حفظ الفحص؛ لم يتم حفظ الفاتورة');
-  invoicePrescription.value=e.savedAt;invoiceExamType.value=e.examType;invoiceDoctor.value=e.doctorName||'';invoicePhone.value=p.phone||'';
+  // لا يُحفظ سجل الفحص إلا مع فاتورة نهائية وبعد وجود دفعة فعلية.
+  let e=null;
+  if(status==='final'&&paid>0){
+    e=saveSalesExam(p);
+    if((salesExamType.value==='داخلي')&&!e)return alert('تعذر حفظ الفحص الداخلي؛ لم تُحفظ الفاتورة');
+    if(e){invoicePrescription.value=e.savedAt;invoiceExamType.value=e.examType;invoiceDoctor.value=e.doctorName||'';}
+  }else{
+    invoiceExamType.value=salesExamType.value||'';invoiceDoctor.value=salesExamType.value==='داخلي'?(salesDoctorName.value||'').trim():'';
+  }
+  invoicePhone.value=p.phone||'';
   saveInvoice(status);
 }
+
+function toggleWorkshopStock(){const p=document.getElementById('wsStockPanel');if(!p)return;p.classList.toggle('hidden');if(!p.classList.contains('hidden')){wsInitStockGroups();wsRenderStock();}const b=document.getElementById('wsStockToggleBtn');if(b)b.setAttribute('aria-expanded',String(!p.classList.contains('hidden')));}
+function currentInvoicePrescription(){
+ const selected=getAllExams().find(x=>x.savedAt===document.getElementById('invoicePrescription')?.value);
+ if(selected)return selected;
+ const v=id=>document.getElementById(id)?.value||'';
+ const any=['salesRxRS','salesRxRC','salesRxRA','salesRxLS','salesRxLC','salesRxLA','salesAdd','salesPd'].some(id=>v(id).trim()!=='');
+ if(!any)return null;
+ return {rxRS:v('salesRxRS'),rxRC:v('salesRxRC'),rxRA:v('salesRxRA'),rxLS:v('salesRxLS'),rxLC:v('salesRxLC'),rxLA:v('salesRxLA'),add:v('salesAdd'),pd:v('salesPd'),examType:v('salesExamType'),doctorName:v('salesExamType')==='داخلي'?v('salesDoctorName'):''};
+}
+
 function matchLensFromPrescription(requestedType='distance'){
  const type=(document.getElementById('saleLensType')?.value||'').trim();
  const glassesType=requestedType==='reading'?'reading':'distance';
- const exam=getAllExams().find(x=>x.savedAt===document.getElementById('invoicePrescription')?.value);
+ const exam=currentInvoicePrescription();
  const hint=document.getElementById('lensMatchHint');
  if(!type){if(hint)hint.textContent='اختر نوع العدسة WT أو PH أو BluCut أولاً.';return;}
- if(!exam){if(hint)hint.textContent='اختر وصفة محفوظة للمريض أولاً، أو احفظ الفحص أولاً.';return;}
+ if(!exam){if(hint)hint.textContent='أدخل مقاس العينين في قسم فحص النظر أعلاه؛ لا يشترط حفظ الوصفة مسبقاً.';return;}
  const num=v=>{const t=String(v??'').trim().replace(/−/g,'-').replace(/,/g,'.');if(!t)return 0;const n=Number(t);return Number.isFinite(n)?n:0};
  // ADD is read only from the patient's saved prescription; never entered separately on the invoice.
  const add=num(exam.add ?? exam.ADD ?? exam.addition ?? exam.nearAdd);
@@ -1129,6 +1149,17 @@ function matchLensFromPrescription(requestedType='distance'){
  invoiceLines=invoiceLines.filter(x=>!(x.autoMatchedLens&&x.glassesType===glassesType));
  chosen.forEach(e=>{const x=e.match,p=x.item;const baseName=(p?.id==='LENS-GROUP'?'عدسات '+type:(p?.name||'عدسات'))+' — '+x.name;invoiceLines.push({inventoryId:p?.id||'LENS-GROUP',groupName:x.name,name:baseName+' — '+e.label+(glassesType==='reading'?' — قراءة من الوصفة ADD '+(add>=0?'+':'')+add.toFixed(2):' — نظر بعيد'),eye:e.label,qty:1,price:Number(x.price||0),total:Number(x.price||0),lineKey:'AUTO-LENS|'+type+'|'+glassesType+'|'+e.label+'|'+x.name,autoMatchedLens:true,lensType:type,glassesType,readingAdd:glassesType==='reading'?add:0,prescription:{sph:e.sph,cyl:e.cyl,add:glassesType==='reading'?add:0}});});
  renderInvoiceLines();recalcInvoice();const chosenGroups=[...new Set(chosen.map(e=>e.match.name))];const chosenPrices=[...new Set(chosen.map(e=>Number(e.match.price||0)))];const ph=document.getElementById('saleLensGroupPriceHint');if(ph)ph.textContent='القروب المطابق: '+chosenGroups.join('، ')+' — السعر/العين حسب المخزون: '+chosenPrices.map(money).join('، ');if(hint)hint.textContent='تمت إضافة '+(glassesType==='reading'?'نظارة القراءة من الوصفة (ADD '+(add>=0?'+':'')+add.toFixed(2)+')':'نظارة النظر البعيد')+'؛ تمت مطابقة كل عين بصورة مستقلة حسب '+type+'. يمكنك إضافة النوع الآخر للفاتورة نفسها.';
+}
+function matchBothGlasses(){
+  if(!currentInvoicePrescription())return alert('أدخل مقاس الوصفة أولاً.');
+  const before=invoiceLines.slice();
+  matchLensFromPrescription('distance');
+  const afterDistance=invoiceLines.slice();
+  const distanceAdded=afterDistance.some(x=>x.autoMatchedLens&&x.glassesType==='distance');
+  if(!distanceAdded)return;
+  matchLensFromPrescription('reading');
+  const readingAdded=invoiceLines.some(x=>x.autoMatchedLens&&x.glassesType==='reading');
+  if(!readingAdded){invoiceLines=before;renderInvoiceLines();recalcInvoice();alert('لم تتم إضافة النظارتين معاً؛ تعذرت مطابقة نظارة القراءة.');}
 }
 function findSaleSelection(v){
   const raw=(v||'').trim().toLowerCase();
@@ -1405,6 +1436,7 @@ function deleteInvoice(id){
 
 function printInvoice(id){
   let s=getSales().find(x=>x.id===id);if(!s)return;
+  const printChoice=prompt('اختر موضع طباعة الفاتورة: 1 أعلى فقط، 2 أسفل فقط، 3 الاثنين معاً','3');if(printChoice===null)return;const printTop=printChoice==='1'||printChoice==='3',printBottom=printChoice==='2'||printChoice==='3';if(!printTop&&!printBottom)return alert('اختر 1 أو 2 أو 3.');
   let e=s.exam||{}, center=getSettings().centerName||'مركز الحكيم للبصريات';
 
   const prescription = `
@@ -1461,7 +1493,8 @@ function printInvoice(id){
       ${patient}
       ${prescription}
       ${includeSales?sales:''}
-      ${includeSales && centerNote ? `<p class="center-note"><b>${centerNote}</b></p>` : ''}
+      ${includeSales && (s.notes||s.invoiceNotes) ? `<p class="center-note"><b>ملاحظات:</b> ${esc(s.notes||s.invoiceNotes)}</p>` : ''}
+      ${includeSales && centerNote ? `<p class="center-note"><b>${esc(centerNote)}</b></p>` : ''}
       ${centerFooter}
     </section>`;
   }
@@ -1505,8 +1538,8 @@ function printInvoice(id){
       <button type="button" id="closeBtn" onclick="if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else{window.close();}">إغلاق</button>
     </div>
     <div class="page">
-      ${copy('',false)}
-      ${copy('',true)}
+      ${printTop?copy('نسخة أعلى',true):''}
+      ${printBottom?copy('نسخة أسفل',true):''}
     </div>
   
 
@@ -1545,9 +1578,14 @@ function printInvoice(id){
         window.focus();
       })();
     <\/script>
+
+// Compact UI safeguards: phone numbers max 12 digits; dates default to today.
+document.addEventListener('input',function(ev){const el=ev.target;if(!el||el.tagName!=='INPUT')return;const id=(el.id||'').toLowerCase(),label=(el.closest('div')?.querySelector('label')?.textContent||'').toLowerCase();if(id.includes('phone')||label.includes('الهاتف')||label.includes('رقم الهاتف')){el.value=el.value.replace(/\D/g,'').slice(0,12);el.maxLength=12;}});
+document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('input[type="date"]').forEach(el=>{if(!el.value)el.value=todayISO();});document.querySelectorAll('input[id*="phone" i]').forEach(el=>{el.maxLength=12;el.inputMode='numeric';});});
+
 </body></html>`);
   w.document.close();
-}function renderSales(){let all=getSales(),finals=all.filter(x=>x.status==='final');let viewRows=salesView==='draft'?all.filter(x=>x.status==='draft'):finals;viewRows=viewRows.slice().reverse();const qEl=document.getElementById(salesView==='draft'?'salesSearchDraft':'salesSearchFinal');const q=String(qEl?.value||'').toLowerCase();viewRows=viewRows.filter(x=>(x.id+' '+x.patientName).toLowerCase().includes(q));const html=viewRows.map(x=>`<tr><td>${x.id}</td><td>${x.date}</td><td>${x.patientName||'—'}</td><td>${money(x.total)}</td><td>${money(x.status==='final'?x.paid:0)}</td><td>${money(x.status==='final'?x.due:0)}</td><td>${x.status==='final'?'نهائية':'مبدئية'}</td><td>${x.paymentMethod==='bank'?'بنكك':'نقد'}</td><td><button class="btn" onclick="editInvoice('${x.id}')">تعديل</button> <button class="btn secondary" onclick="settleInvoice('${x.id}')">سداد</button> <button class="btn" onclick="printInvoice('${x.id}')">طباعة</button> <button class="btn secondary" onclick="deleteInvoice('${x.id}')">حذف</button></td></tr>`).join('')||'<tr><td colspan="9">لا توجد بيانات</td></tr>';const target=document.getElementById(salesView==='draft'?'salesRowsDraft':'salesRowsFinal');if(target)target.innerHTML=html;let t=finals.reduce((a,x)=>a+Number(x.total||0),0),p=finals.reduce((a,x)=>a+Number(x.paid||0),0);if(document.getElementById('salesTotal'))salesTotal.textContent=money(t);if(document.getElementById('salesPaid'))salesPaid.textContent=money(p);if(document.getElementById('salesDue'))salesDue.textContent=money(finals.reduce((a,x)=>a+Number(x.due||0),0));if(document.getElementById('salesCount'))salesCount.textContent=finals.length}
+}function renderSales(){let all=getSales(),finals=all.filter(x=>x.status==='final');let viewRows=salesView==='draft'?all.filter(x=>x.status==='draft'):finals;viewRows=viewRows.slice().reverse();const qEl=document.getElementById(salesView==='draft'?'salesSearchDraft':'salesSearchFinal');const q=String(qEl?.value||'').toLowerCase();viewRows=viewRows.filter(x=>(x.id+' '+(x.patientName||'')+' '+(x.phone||'')).toLowerCase().includes(q));const html=viewRows.map(x=>`<tr><td>${x.id}</td><td>${x.date}</td><td>${x.patientName||'—'}</td><td>${money(x.total)}</td><td>${money(x.status==='final'?x.paid:0)}</td><td>${money(x.status==='final'?x.due:0)}</td><td>${x.status==='final'?'نهائية':'مبدئية'}</td><td>${x.paymentMethod==='bank'?'بنكك':'نقد'}</td><td><button class="btn" onclick="editInvoice('${x.id}')">تعديل</button> <button class="btn secondary" onclick="settleInvoice('${x.id}')">سداد</button> <button class="btn" onclick="printInvoice('${x.id}')">طباعة</button> <button class="btn secondary" onclick="deleteInvoice('${x.id}')">حذف</button></td></tr>`).join('')||'<tr><td colspan="9">لا توجد بيانات</td></tr>';const target=document.getElementById(salesView==='draft'?'salesRowsDraft':'salesRowsFinal');if(target)target.innerHTML=html;let t=finals.reduce((a,x)=>a+Number(x.total||0),0),p=finals.reduce((a,x)=>a+Number(x.paid||0),0);if(document.getElementById('salesTotal'))salesTotal.textContent=money(t);if(document.getElementById('salesPaid'))salesPaid.textContent=money(p);if(document.getElementById('salesDue'))salesDue.textContent=money(finals.reduce((a,x)=>a+Number(x.due||0),0));if(document.getElementById('salesCount'))salesCount.textContent=finals.length}
 function getLensPrices(){
   const defaults=standardLensGroups().map(g=>({name:g.name,price:Number(g.price||0)}));
   const saved=get(K.lensPrices,[]);
@@ -1563,6 +1601,7 @@ function saveLensPrices(){
   buildProductDatalist();
   alert('تم حفظ أسعار قروبات العدسات');
 }
+function toggleLensPricePanel(){const p=document.getElementById('globalLensPricePanel');if(p)p.classList.toggle('hidden');}
 function renderGlobalLensPrices(){
   const el=document.getElementById('globalLensPriceList'); if(!el)return;
   el.innerHTML=getLensPrices().map(g=>`<div class="form" style="grid-template-columns:1fr 180px;margin:5px 0"><div><label>${g.name}</label></div><div><input class="global-lens-price" data-name="${g.name.replace(/"/g,'&quot;')}" type="number" min="0" value="${Number(g.price||0)}" placeholder="السعر"></div></div>`).join('');
@@ -1724,11 +1763,15 @@ function renderConsumables(){consumableRows.innerHTML=getConsumables().slice().r
 function renderDoctorReport(){
   const q=(document.getElementById('doctorReportSearch')?.value||'').trim().toLowerCase();
   const month=document.getElementById('doctorReportMonth')?.value||todayISO().slice(0,7);
-  const exams=getAllExams().filter(e=>String(e.examDate||'').slice(0,7)===month && String(e.examType||'داخلي')!=='خارجي' && String(e.doctorName||'').trim());
+  const allInternal=getAllExams().filter(e=>String(e.examType||'داخلي')==='داخلي' && String(e.doctorName||'').trim());
+  const now=new Date(); const today=todayISO(); const weekStart=new Date(now); weekStart.setHours(0,0,0,0); weekStart.setDate(now.getDate()-((now.getDay()+6)%7)); const weekEnd=new Date(weekStart); weekEnd.setDate(weekStart.getDate()+7);
+  const inWeek=e=>{const d=new Date(String(e.examDate||'')+'T12:00:00');return !isNaN(d)&&d>=weekStart&&d<weekEnd};
+  const countToday=allInternal.filter(e=>e.examDate===today).length; const countWeek=allInternal.filter(inWeek).length; const countMonth=allInternal.filter(e=>String(e.examDate||'').slice(0,7)===month).length;
+  const exams=allInternal.filter(e=>String(e.examDate||'').slice(0,7)===month);
   const byDoctor={};
   exams.forEach(e=>{const n=(e.doctorName||'').trim();if(!n)return;if(q&&!n.toLowerCase().includes(q))return;if(!byDoctor[n])byDoctor[n]={total:0,daily:{}};byDoctor[n].total++;const d=e.examDate||'غير محدد';byDoctor[n].daily[d]=(byDoctor[n].daily[d]||0)+1;});
   const names=Object.keys(byDoctor).sort((a,b)=>a.localeCompare(b,'ar'));
-  let html='<div class="cards" style="margin-bottom:12px">'+names.map(n=>`<div class="card"><div class="label">${n} — فحوصات الشهر</div><div class="num">${byDoctor[n].total}</div></div>`).join('')+'</div>';
+  let html='<div class="cards" style="margin-bottom:12px"><div class="card"><div class="label">إجمالي فحوصات اليوم</div><div class="num">'+countToday+'</div></div><div class="card"><div class="label">إجمالي فحوصات الأسبوع الحالي</div><div class="num">'+countWeek+'</div></div><div class="card"><div class="label">إجمالي فحوصات الشهر المحدد</div><div class="num">'+countMonth+'</div></div>'+names.map(n=>`<div class="card"><div class="label">${n} — فحوصات الشهر</div><div class="num">${byDoctor[n].total}</div></div>`).join('')+'</div>';
   html+=names.map(n=>{const v=byDoctor[n],days=Object.keys(v.daily).sort();return `<div class="panel" style="margin:10px 0"><div class="top"><h3 style="margin:0">👨‍⚕️ ${n}</h3><b>إجمالي الشهر: ${v.total} فحص</b></div><table><thead><tr><th>التاريخ</th><th>عدد الفحوصات</th></tr></thead><tbody>${days.map(d=>`<tr><td>${d}</td><td>${v.daily[d]}</td></tr>`).join('')}</tbody><tfoot><tr><th>مجموع الشهر</th><th>${v.total}</th></tr></tfoot></table></div>`}).join('');
   document.getElementById('doctorReport').innerHTML=html||'<p>لا توجد فحوصات لهذا الطبيب في الشهر المحدد.</p>';
 }
@@ -2608,7 +2651,9 @@ function boot(){
   setTimeout(()=>{if(cloudClient)checkSellerAuthorization().catch(e=>console.error('checkSellerAuthorization',e))},1200);
 }
 
-document.addEventListener('DOMContentLoaded',()=>{try{boot()}catch(e){console.error(e);showGoogleLogin('حدث خطأ أثناء تشغيل النظام. أعد تحميل الصفحة.');}},{once:true});
+document.addEventListener('DOMContentLoaded',()=>{
+ ['salesRxRS','salesRxRC','salesRxLS','salesRxLC','salesAdd'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('change',()=>{if(document.getElementById('saleLensType')?.value)matchLensFromPrescription('distance')})});
+try{boot()}catch(e){console.error(e);showGoogleLogin('حدث خطأ أثناء تشغيل النظام. أعد تحميل الصفحة.');}},{once:true});
 window.addEventListener('load',()=>{try{updateFixedLoginAccount();const bind=(id,fn)=>{const b=document.getElementById(id);if(b&&!b.dataset.bound){b.dataset.bound='1';b.addEventListener('click',()=>Promise.resolve(fn()).catch(err=>{console.error(err);const m=document.getElementById('subscriptionMessage');if(m)m.textContent='حدث خطأ: '+(err?.message||'تعذر تنفيذ العملية.')}));}};bind('subTrialBtn',startTrialAndContinue);bind('subYearlyBtn',requestYearlySubscription);bind('subCheckBtn',checkLicenseAndContinue);}catch(e){console.error('subscription buttons',e)}});
 
 function exportOfflineSync(){
@@ -2810,27 +2855,6 @@ function importOfflineSync(input){
   window.exportCloudSafeBackup=async function(){if(typeof requireAdmin==='function'&&!requireAdmin())return;if(typeof exportBackup==='function')exportBackup();if(typeof cloudPush==='function'&&isOnline())await cloudPush();activity('نسخة احتياطية ومزامنة');};
 })();
 
-</script>
-<script>
-// Emergency startup guard: never leave the user staring at the footer only.
-(function(){
-  function ensureVisibleStartup(){
-    const shell=document.getElementById('appShell');
-    if(shell && shell.classList.contains('unlocked')) return;
-    const screens=[...document.querySelectorAll('.auth-screen')];
-    if(screens.some(el=>getComputedStyle(el).display!=='none')) return;
-    const login=document.getElementById('loginScreen');
-    if(login){
-      login.style.display='flex';
-      const status=document.getElementById('loginStatus');
-      if(status && !status.textContent.trim()) status.textContent='تعذر إكمال تشغيل النظام تلقائياً. أعد تحميل الصفحة، وإذا استمرت المشكلة أرسل صورة للشاشة.';
-    }
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(ensureVisibleStartup,1800),{once:true});
-  else setTimeout(ensureVisibleStartup,1800);
-  window.addEventListener('error',()=>setTimeout(ensureVisibleStartup,100));
-  window.addEventListener('unhandledrejection',()=>setTimeout(ensureVisibleStartup,100));
-})();
 </script>
 </body>
 </html>
