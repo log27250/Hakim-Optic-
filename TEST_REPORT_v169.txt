@@ -1,0 +1,16 @@
+TEST REPORT — v169
+
+Passed:
+- Extracted inline JavaScript blocks: node --check passed (all non-empty blocks).
+- sw.js: node --check passed.
+- ZIP integrity check passed after packaging.
+- Save flow static inspection: no about:blank popup creation in saveCombinedInvoiceInternal.
+- Invoice save path has no "جاري تجهيز الفاتورة" placeholder string.
+- Local invoice record is read back by ID before the form is hidden and invoice rendering begins.
+
+Not performed:
+- No real browser checkout using the user's live center data.
+- No live Supabase write or RLS test.
+- No physical Android device test.
+
+This report distinguishes static code checks from live operational testing.
