@@ -1,0 +1,21 @@
+TEST REPORT — v166
+
+PASS
+- index.html inline JavaScript blocks: 3/3 node --check
+- sw.js: node --check
+- Social-link normalization/collection isolated test: 4/4 expected links returned
+- PWA shell files present: index.html, sw.js, manifest.webmanifest, offline.html, icon-192.png, icon-512.png
+- Cache identifier updated in both index.html and sw.js
+
+SOURCE-LEVEL CHECKS ONLY
+- Invoice core now checks local writes to inventory/contact-lens stock/sales.
+- Invoice save wrapper snapshots and locally restores sales/inventory/contact lens/stock move keys if invoice record did not persist.
+- Temporary print tab has a 12-second watchdog to replace an indefinitely visible loading state with instructions.
+- Settings save verifies stored social-link fields; thank-you message builders read normalized legacy and nested link fields.
+
+NOT EXECUTED
+- Browser interaction tests (Android/desktop).
+- Real localStorage quota exhaustion simulation in target browser.
+- Actual print dialog and WhatsApp handoff tests.
+- Live Supabase sync / multi-device conflict tests.
+- No Supabase migrations or live data modifications.
