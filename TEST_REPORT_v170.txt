@@ -1,0 +1,15 @@
+TEST REPORT — v170
+
+Passed:
+1. Extracted application JavaScript passes `node --check`.
+2. Confirmed the core save path checks the persisted invoice by ID before hiding the form and rendering the invoice.
+3. Confirmed the transaction wrapper no longer uses byte-for-byte localStorage equality as the success criterion after a successful core save.
+4. Confirmed the combined save handler returns the boolean result from saveInvoice.
+5. Confirmed service-worker cache key is unique to v170.
+
+Not performed in this environment:
+- Live sale on the user's phone/computer.
+- Live Supabase sync / multi-branch verification.
+- Browser quota, offline and network interruption simulation.
+
+Safety: no live database writes, migrations, RLS changes, or patient/sales record edits were performed.

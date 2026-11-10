@@ -1,0 +1,9 @@
+Hakim Optic — v170
+
+Invoice save-path correction:
+- Transaction wrapper now trusts the core's invoice-ID read-back verification instead of treating raw localStorage string equality as the success criterion.
+- Snapshot rollback remains active when the core returns failure or throws before the sales record is written.
+- The combined invoice handler now propagates the actual save result.
+- Service-worker cache key bumped to v170.
+
+No Supabase schema, RLS policy, or live patient/sales data was changed. Static JavaScript syntax checks passed. Real-device and live-Supabase transaction tests remain to be performed after backup.
