@@ -1,0 +1,20 @@
+# Release Notes — v174
+
+Built on the supplied v170 package and preserves its invoice-save fix and PWA assets.
+
+## Workshop workflow
+- Keeps the center-workshop action specifically scoped to each individual center-workshop glasses order: «تسليم للفني».
+- Keeps external-workshop dispatch separate and selectable per glasses order; only checked external glasses are included in the dispatch.
+- Maintains per-glasses status, expected delivery date, technician, sent/ready/delivered timestamps, late tracking, and editable WhatsApp apology.
+- Adds an external workshop WhatsApp dispatch sheet with patient, dispatch date, invoice, frame, glasses type, lens type, prescription values, and expected delivery date.
+- Makes the four status summary cards toggle their result panel: tap to open, tap the same card again to close.
+- Fixes a rendering issue in the per-glasses table row renderer where the optional table context was referenced without being declared.
+- Makes batch external dispatch persistence rollback the in-memory sales changes if a selected order cannot be saved.
+
+## Multiple glasses / stock
+- Retains unique glassesOrderId groups for additional distance and reading glasses, with one matched lens line per eye.
+- Retains a per-glasses idempotency ledger for center workshop lens deductions and rollback if persistence fails.
+- Legacy records remain readable and are converted lazily when a workshop action is performed; no database schema migration is included.
+
+## PWA
+- Bumps the Service Worker cache name to v174 so clients fetch the updated application shell.

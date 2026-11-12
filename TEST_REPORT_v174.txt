@@ -1,0 +1,20 @@
+# Test Report — v174
+
+## Passed
+- Extracted all 3 inline JavaScript blocks and passed `node --check`.
+- Verified unique DOM IDs for the per-glasses center, external, technician, late, and main workshop tables.
+- Verified all four status cards call the open/close handler.
+- Verified the per-glasses row renderer declares its optional context parameter (fixes a runtime ReferenceError in v173).
+- Verified external batch dispatch uses selected external glasses only and snapshots invoice data for rollback on persistence failure.
+- Verified the Service Worker cache key is v174.
+- No SQL, Supabase schema, RLS, or live customer records were changed.
+
+## Not run — requires the actual center device/browser
+- Browser interaction and visual layout tests.
+- Actual localStorage/IndexedDB quota and storage rollback tests.
+- Multi-device offline synchronization and concurrent actions.
+- WhatsApp handoff and actual sending (operator must review and press Send).
+- End-to-end payment, stock, and delivery flow on a disposable test invoice.
+
+## Safe first test
+Create a test invoice (not a live customer invoice) containing one distance pair and one reading pair. If desired, add a second distance or reading pair. Confirm each pair appears as its own glasses order, check that the center workshop button says «تسليم للفني», and check that the external workshop only dispatches selected glasses. Compare workshop stock before and after center handover; each eye lens should be deducted once. Confirm no actual WhatsApp message is sent until the operator taps Send.
