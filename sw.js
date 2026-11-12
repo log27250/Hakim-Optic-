@@ -1,0 +1,6 @@
+/* Hakim Optic PWA service worker — v174-workshop-final-fixes */
+const CACHE = 'hakim-optics-offline-v176-workshop-delivery-whatsapp';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './offline.html', './icon-192.png', './icon-512.png', 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'];
+self.addEventListener('install', event => { event.waitUntil((async()=>{const c=await caches.open(CACHE);for(const u of SHELL){try{const r=await fetch(u,{cache:'no-store'});if(r&&(r.ok||r.type==='opaque'))await c.put(u,r.clone())}catch(_){}}await self.skipWaiting()})()) });
+self.addEventListener('activate', event => {event.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('hakim-optics-offline-')&&k!==CACHE)await caches.delete(k);await self.clients.claim()})())});
+self.addEventListener('fetch', event => {const r=event.request;if(r.method!=='GET')return;const u=new URL(r.url);if(r.mode==='navigate'){event.respondWith((async()=>{try{const fresh=await fetch(r);const c=await caches.open(CACHE);c.put('./index.html',fresh.clone());return fresh}catch(_){return (await caches.match(r))||(await caches.match('./index.html'))||(await caches.match('./offline.html'))}})());return;}event.respondWith((async()=>{const hit=await caches.match(r);if(hit)return hit;try{return await fetch(r)}catch(_){return hit||Response.error()}})())});
