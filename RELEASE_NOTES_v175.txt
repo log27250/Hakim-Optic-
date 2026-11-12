@@ -1,0 +1,17 @@
+# Release Notes — v175
+
+Built from the v174 release. This is a targeted invoice-save reliability and diagnostics patch; workshop features from v174 are retained.
+
+## Invoice save path
+- Adds a catch around the complete combined-invoice save operation. Exceptions thrown before the lower-level invoice saver now produce a visible Arabic error instead of silently stopping with no alert.
+- Identifies the stage that failed: validation, patient-file persistence, exam/prescription persistence, or invoice/inventory persistence.
+- Verifies patient-file writes and stops invoice creation if the patient record cannot be persisted/read back.
+- Verifies exam and patient update writes instead of silently continuing after a failed write.
+- Keeps the existing duplicate-save guard and invoice read-back check.
+
+## PWA
+- Updates the Service Worker cache key to v175 to force the updated app shell to be fetched.
+
+## Important
+- This patch improves failure visibility and blocks silent continuation after failed patient/exam writes. It does not prove the root runtime failure on the user's device until the displayed stage/error is captured in a real browser test.
+- No Supabase schema, RLS, or live records were changed.

@@ -1,0 +1,16 @@
+# Test Report — v175
+
+## Static checks
+- Extracted all inline JavaScript blocks and passed `node --check`.
+- Verified combined invoice save wrapper catches pre-invoice exceptions and reports the stage plus error detail.
+- Verified patient, exam, and invoice write paths check persistence return values/read-back.
+- Service Worker cache key updated to v175.
+
+## Not run — requires actual center device/browser
+- Real invoice save with the user's current patient, exam, payment, and inventory state.
+- Browser console/runtime test and visual invoice rendering.
+- Actual offline synchronization and multi-device tests.
+- Actual workshop stock deduction and WhatsApp handoff.
+
+## Safe first test
+Use a disposable test patient and test invoice, not a live customer transaction. If save fails, record the exact Arabic stage and reason shown in the alert. Do not repeatedly press Save. Check Sales before retrying to avoid duplicate records.
