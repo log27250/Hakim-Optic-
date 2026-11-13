@@ -1,0 +1,12 @@
+TEST REPORT — v178
+
+PASS: JavaScript syntax validation for all 3 actual inline script blocks using Node.js --check.
+PASS: Static verification of exact exam-fee branch, draft status selection, separate examFeePayment persistence, and daily cash/bank collection inclusion.
+PASS: Static verification that printInvoice declares its HTML escape helper before prescription template construction.
+PASS: Static verification of workshop external table row generation and wa.me recipient picker flow.
+PENDING: Real browser test for a new internal exam with exact exam-fee payment.
+PENDING: Android/PWA print flow test for glasses invoice from sales management.
+PENDING: WhatsApp recipient picker and multi-glasses table visual check on Android.
+PENDING: Live Supabase sync/multi-branch test.
+
+No live customer, invoice, inventory, or Supabase data was modified during these checks.
