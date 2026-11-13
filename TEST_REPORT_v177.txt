@@ -1,0 +1,9 @@
+اختبارات الإصدار v177
+
+- فحص صياغة JavaScript لجميع كتل script: يجرى بعد البناء.
+- التحقق من أن saveSalesExam لا يقرأ right/left من null.
+- التحقق من مقارنة معرف الفاتورة نصياً في printInvoice.
+- التحقق من وجود زر إرسال مفرد وزر إرسال جماعي وكود فتح WhatsApp recipient picker.
+- ZIP integrity check.
+
+لم يتم تنفيذ اختبار حي على متصفح Android أو قاعدة Supabase؛ يلزم اختبار تشغيلي بعد النسخ الاحتياطي.
