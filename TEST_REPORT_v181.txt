@@ -1,0 +1,7 @@
+فحص الإصدار v181
+- JavaScript inline syntax: PASS (node --check).
+- ZIP integrity: PASS (unzip -t).
+- HTML structural inspection: PASS; إدارة المناوبين موجودة داخل settings فقط، ولا توجد لوحة إدارة مناوبين في dashboard.
+- Report UI: للمستخدم زر التقرير المالي اليومي وزر كشف بنكك فقط، مع منع setReportView لبقية التقارير.
+- PWA: تم تحديث مفتاح Cache في sw.js إلى v181.
+- لم يتم اختبار جلسة Supabase أو الصلاحيات على جهاز فعلي؛ الاختبارات ثابتة محلياً فقط.
