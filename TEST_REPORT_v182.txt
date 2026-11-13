@@ -1,0 +1,12 @@
+TEST REPORT v182
+- Inline JavaScript syntax: PASS (all non-empty inline script blocks checked with node --check).
+- Service worker syntax: PASS (node --check).
+- Founder recognition path: exact Google email alhakimoptic@gmail.com is checked through Supabase auth.getUser(); no email-only username heuristic.
+- Founder subscription bypass: wired into Google auth routing, seller authorization, and license check.
+- Founder dashboard subscription card/gate: hidden after founder identity verification.
+- Shift management: panel located within settings section, admin-only, labelled إدارة المناوبين وحسابات الدخول.
+- Legacy user-side add/delete shift functions now require admin; no old user shift management panel markup remains.
+- PWA: service worker cache key bumped to v182; manifest included.
+- ZIP integrity: checked after packaging.
+- No Supabase schema changes or live data writes.
+- No live Google/Supabase login test on the user's account/device was possible in this build environment.
