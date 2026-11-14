@@ -1,5 +1,5 @@
-/* Hakim Optics PWA service worker — v187 sidebar logo pseudo-element fix */
-const CACHE = 'hakim-optics-offline-v187-sidebar-logo-fix';
+/* Hakim Optics PWA service worker — v188 sidebar logo pseudo-element fix */
+const CACHE = 'hakim-optics-offline-v188-brand-icons-contact';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './offline.html', './icon-192.png', './icon-512.png', 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'];
 self.addEventListener('install', event => { event.waitUntil((async()=>{const c=await caches.open(CACHE);for(const u of SHELL){try{const r=await fetch(u,{cache:'no-store'});if(r&&(r.ok||r.type==='opaque'))await c.put(u,r.clone())}catch(_){}}await self.skipWaiting()})()) });
 self.addEventListener('activate', event => {event.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('hakim-optics-offline-')&&k!==CACHE)await caches.delete(k);await self.clients.claim()})())});
