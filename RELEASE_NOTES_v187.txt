@@ -1,0 +1,7 @@
+Hakim Optics v187 — Sidebar center-title correction
+
+- Fixed the extra Arabic letter ح appearing after the center/system title in the mobile sidebar.
+- Root cause: a legacy responsive CSS rule added .logo::after { content: "ح" } for the old compact sidebar. The current sidebar displays the full center title, so that pseudo-element was no longer appropriate.
+- Added a final CSS override to suppress the obsolete pseudo-element without changing the displayed center name or saved settings.
+- Updated the service-worker cache key to v187 so installed PWA clients fetch the corrected interface.
+- All v186 business logic and workshop WhatsApp formatting are preserved.

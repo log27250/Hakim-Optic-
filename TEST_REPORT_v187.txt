@@ -1,0 +1,9 @@
+Static validation for v187
+
+- Verified the v187 CSS override exists after the legacy responsive rule and suppresses .sidebar .logo::after.
+- Verified the center-name HTML/content and application logic were not modified.
+- Verified service-worker cache key changed to v187.
+- All extracted inline JavaScript blocks passed `node --check`.
+- `sw.js` passed `node --check`.
+- ZIP integrity: pending (performed below).
+- No live browser/device, WhatsApp, GitHub Pages, or Supabase test was performed.
